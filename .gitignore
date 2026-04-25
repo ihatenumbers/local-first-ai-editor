@@ -1,0 +1,46 @@
+node_modules
+
+# Output
+.output
+.vercel
+.netlify
+.wrangler
+/.svelte-kit
+/build
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Env
+.env
+.env.*
+!.env.example
+!.env.test
+
+# Vite
+vite.config.js.timestamp-*
+vite.config.ts.timestamp-*
+# Playwright
+test-results
+
+# NPM Logs (Useful since npm threw an error earlier!)
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Playwright Reports (Currently only test-results is ignored)
+playwright-report/
+blob-report/
+playwright/.cache/
+
+# Vitest / Coverage Reports
+coverage/
+
+# Optional: VSCode User-Specific Workspace Data
+# Note: You can commit .vscode/extensions.json or settings.json if you want to share workspace settings,
+# but ignore local history/state.
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json

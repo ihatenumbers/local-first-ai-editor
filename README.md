@@ -1,0 +1,96 @@
+# Offline AI Writer & Semantic Reviewer
+
+A browser-native, privacy-first writing application designed for serious authors. This platform shifts AI usage from "generative writing" to "editorial review," acting as a semantic linter for your prose. 
+
+It operates entirely client-side without a backend runtime server. It utilizes local browser storage (IndexedDB) for secure, offline-first saving, and standard AI API endpoints to provide context-aware critiques without altering your base manuscript unless explicitly approved.
+
+## 🛠 Tech Stack
+
+* **Framework:** [SvelteKit](https://kit.svelte.dev/) (Configured for Static/SPA deployment)
+* **Styling:** [Tailwind CSS](https://tailwindcss.com/) & Typography/Forms plugins
+* **Editor Engine:** [Tiptap](https://tiptap.dev/) (Headless wrapper for ProseMirror)
+* **State & Offline Storage:** [Yjs](https://yjs.dev/) + `y-indexeddb`
+* **Icons:** [Lucide-Svelte](https://lucide.dev/guide/packages/lucide-svelte)
+* **Testing:** Vitest (Unit/Component) & Playwright (E2E)
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+* Node.js (v18 or higher recommended)
+* NPM (or pnpm/yarn)
+
+### Installation
+Clone the repository and install the dependencies:
+
+```bash
+npm install
+```
+
+### Development
+Start the development server with Hot Module Replacement (HMR):
+
+```bash
+npm run dev
+
+# Or start the server and automatically open it in your browser
+npm run dev -- --open
+```
+
+---
+
+## 🏗 Building for Production
+
+To create a production-ready, highly optimized static version of the app:
+
+```bash
+npm run build
+```
+
+You can preview the compiled production build locally with:
+
+```bash
+npm run preview
+```
+
+> **Note on Deployment:** Because this app is designed to run entirely in the browser without a Node.js server, we will eventually configure SvelteKit to use `@sveltejs/adapter-static` to output pure HTML/CSS/JS files that can be hosted anywhere (GitHub Pages, Cloudflare Pages, Vercel, or a local file server).
+
+---
+
+## 🧪 Testing and Linting
+
+This project is configured with comprehensive testing suites.
+
+**Run Unit & Component Tests (Vitest):**
+```bash
+npm run test:unit
+```
+
+**Run End-to-End Tests (Playwright):**
+```bash
+npm run test:e2e
+```
+
+**Run Linter (ESLint) & Formatter (Prettier):**
+```bash
+npm run lint
+npm run format
+```
+
+---
+
+## 🗺 Phase 1 Roadmap (MVP)
+
+- [x] Scaffold SvelteKit project with TypeScript, Tailwind, and testing suites.
+- [x] Install core dependencies (Tiptap, Yjs, Lucide).
+- [ ] **Layout:** Build the responsive, ultrawide 4-column UI shell.
+- [ ] **Editor:** Implement the base `Tiptap.svelte` component with standard Markdown shortcuts.
+- [ ] **Persistence:** Integrate Yjs with `y-indexeddb` to ensure document state survives page reloads natively.
+- [ ] **Context Management:** Build Svelte Stores for managing the "Context Board" (Characters, Story So Far, Writing Objectives).
+- [ ] **AI Integration:** Implement the standard `/v1/chat/completions` API fetch logic (BYOK - Bring Your Own Key).
+- [ ] **Review Logic:** Build the `ContextStore` prompt assembly (combining active recipes, context board, and scene text).
+- [ ] **Critique UI:** Integrate a selection-based annotation system (e.g., `tiptap-comment-extension`) to anchor AI feedback to specific paragraphs.
+
+---
+*Developed for a distraction-free, privacy-first writing experience.*
