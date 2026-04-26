@@ -8,11 +8,10 @@ describe('DocumentState', () => {
         expect(doc.currentScene).toBe(1);
         expect(doc.wordCount).toBe(0);
         expect(doc.todoList).toEqual([]);
-        expect(doc.reviewRecipes).toEqual([]);
-        expect(doc.charactersText).toBe('');
-        expect(doc.locationsText).toBe('');
-        expect(doc.objectivesText).toBe('');
-        expect(doc.storySoFarText).toBe('');
+        expect(doc.reviewRecipes.length).toBe(2);
+        
+        expect(doc.objectivesText).toBe('Establish the tension between the two leads. Raise the stakes for the next chapter.');
+        expect(doc.contextItems.length).toBe(2);
     });
 
     it('can update values', () => {

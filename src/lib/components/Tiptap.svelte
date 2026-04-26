@@ -34,10 +34,7 @@
 				StarterKit,
 				CharacterCount,
 			],
-			content: `
-				<h1>The Dark Forest</h1>
-				<p>The trees loomed like ancient sentinels.</p>
-			`,
+			content: '',
 			editorProps: {
 				attributes: {
 					class: 'prose prose-zinc prose-lg max-w-none focus:outline-none min-h-[500px]',

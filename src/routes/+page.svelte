@@ -12,9 +12,9 @@
 	// Placeholder test data setup directly in the store, 
 	// overriding default just to maintain the mock UI visually!
 	// documentState.wordCount is now managed by Tiptap
-	documentState.todoList = ['Foreshadow the amulet', 'Describe the lighting', 'Fix dialogue pacing in middle'];
+	documentState.todoList = [];
 	documentState.currentChapter = 1;
-	documentState.currentScene = 2;
+	documentState.currentScene = 1;
 </script>
 
 <main class="flex h-screen w-full overflow-hidden bg-zinc-50 text-zinc-900 font-sans">

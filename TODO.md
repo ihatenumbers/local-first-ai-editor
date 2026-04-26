@@ -26,10 +26,10 @@ Time to replace the `contenteditable` placeholder with a real, robust text edito
 
 ### Milestone 4A: Panel Data Structure & CRUD UI
 Before persisting, we need reactive data structures for the Review and Context panels.
-- [ ] **Update `document.svelte.ts`:** Replace simple string/array states with proper typed arrays of objects (e.g., `ReviewRecipe[]` and `ContextItem[]`).
-- [ ] **ReviewPanel UI (`Active Recipes`):** Build a stack of recipe cards with a checkbox toggle (`isActive`), editable `title`, editable `prompt`, and a delete button. Add an "+ Add Recipe" action.
-- [ ] **ContextPanel UI (`Context Board`):** Keep a fixed "Writing Objectives" area, but implement a dynamic list of cards for other context items (Characters, Locations, etc.) with editable titles, contents, and delete buttons. Add an "+ Add Context" action.
-- [ ] **Update Code and Browser tests to confirm Milestone 4A is working**
+- [x] **Update `document.svelte.ts`:** Replace simple string/array states with proper typed arrays of objects (e.g., `ReviewRecipe[]` and `ContextItem[]`).
+- [x] **ReviewPanel UI (`Active Recipes`):** Build a stack of recipe cards with a checkbox toggle (`isActive`), editable `title`, editable `prompt`, and a delete button. Add an "+ Add Recipe" action.
+- [x] **ContextPanel UI (`Context Board`):** Keep a fixed "Writing Objectives" area, but implement a dynamic list of cards for other context items (Characters, Locations, etc.) with editable titles, contents, and delete buttons. Add an "+ Add Context" action.
+- [x] **Update Code and Browser tests to confirm Milestone 4A is working**
 
 ### Milestone 4B: Yjs & Offline Storage (Persistence)
 This is where the magic happens. We want everything saved to the browser automatically.
