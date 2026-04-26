@@ -40,11 +40,11 @@ Before attempting to save our flat data state, we must introduce the concept of 
 
 ### Milestone 4C: Yjs & Offline Storage (Persistence)
 This is where the magic happens. We want everything saved to the browser automatically.
-- [ ] **Initialize Yjs:** Create a global `Y.Doc` instance in your state manager.
-- [ ] **Bind Tiptap to Yjs:** Install `@tiptap/extension-collaboration` and bind your Tiptap instance to a `Y.XmlFragment` inside your Yjs document. *(Note: Even though we are offline and single-player, this extension is the best way to handle Yjs text binding).*
-- [ ] **Setup `y-indexeddb`:** Connect your `Y.Doc` to an IndexedDB provider. 
-- [ ] **Persist Panel Data:** Sync your `Scene[]`, `ReviewRecipe[]`, and `ContextItem[]` states with `Y.Array` or `Y.Map` within the Yjs document, ensuring your notes and manuscript are saved and versioned together.
-- [ ] **Update Code and Browser tests to confirm Milestone 4C is working **
+- [x] **Initialize Yjs:** Create a global `Y.Doc` instance in your state manager.
+- [x] **Bind Tiptap to Yjs:** Install `@tiptap/extension-collaboration` and bind your Tiptap instance to a `Y.XmlFragment` inside your Yjs document. *(Note: Even though we are offline and single-player, this extension is the best way to handle Yjs text binding).*
+- [x] **Setup `y-indexeddb`:** Connect your `Y.Doc` to an IndexedDB provider. 
+- [x] **Persist Panel Data:** Sync your `Scene[]`, `ReviewRecipe[]`, and `ContextItem[]` states with `Y.Array` or `Y.Map` within the Yjs document, ensuring your notes and manuscript are saved and versioned together.
+- [x] **Update Code and Browser tests to confirm Milestone 4C is working **
 
 ### Milestone 5: API Settings & Context Assembly
 Getting ready for the AI integration.

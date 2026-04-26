@@ -1,4 +1,9 @@
-import { browser } from '$app/environment';
+const fs = require('fs');
+
+const docPath = 'src/lib/state/document.svelte.ts';
+let docText = fs.readFileSync(docPath, 'utf8');
+
+const newDoc = `import { browser } from '$app/environment';
 import * as Y from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
 
@@ -111,3 +116,7 @@ export class DocumentState {
 }
 
 export const documentState = new DocumentState();
+`;
+
+fs.writeFileSync(docPath, newDoc);
+console.log('Document state modified.');

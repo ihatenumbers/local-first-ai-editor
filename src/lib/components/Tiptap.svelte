@@ -1,85 +1,77 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
-	import { Editor } from '@tiptap/core';
-	import StarterKit from '@tiptap/starter-kit';
-	import CharacterCount from '@tiptap/extension-character-count';
-	import { documentState } from '$lib/state/document.svelte';
-	import { 
-		Bold, 
-		Italic, 
-		Heading1, 
-		Heading2, 
-		List, 
-		ListOrdered, 
-		Quote 
-	} from 'lucide-svelte';
+        import { Editor } from '@tiptap/core';
+        import StarterKit from '@tiptap/starter-kit';
+        import CharacterCount from '@tiptap/extension-character-count';
+        import Collaboration from '@tiptap/extension-collaboration';
+        import { documentState } from '$lib/state/document.svelte';
+        import { 
+                Bold, 
+                Italic, 
+                Heading1, 
+                Heading2, 
+                List, 
+                ListOrdered, 
+                Quote 
+        } from 'lucide-svelte';
 
-	let element: HTMLElement;
-	let editor = $state<Editor>();
+        let element: HTMLElement;
+        let editor = $state<Editor>();
 
-	let active = $state({
-		bold: false,
-		italic: false,
-		h1: false,
-		h2: false,
-		bulletList: false,
-		orderedList: false,
-		blockquote: false
-	});
+        let active = $state({
+                bold: false,
+                italic: false,
+                h1: false,
+                h2: false,
+                bulletList: false,
+                orderedList: false,
+                blockquote: false
+        });
 
-	onMount(() => {
-		const newEditor = new Editor({
-			element: element,
-			extensions: [
-				StarterKit,
-				CharacterCount,
-			],
-			content: '',
-			editorProps: {
-				attributes: {
-					class: 'prose prose-zinc prose-lg max-w-none focus:outline-none min-h-[500px]',
-				},
-			},
-			onUpdate: ({ editor: e }) => handleUpdate(e),
-			onTransaction: ({ editor: e }) => {
-				active.bold = e.isActive('bold');
-				active.italic = e.isActive('italic');
-				active.h1 = e.isActive('heading', { level: 1 });
-				active.h2 = e.isActive('heading', { level: 2 });
-				active.bulletList = e.isActive('bulletList');
-				active.orderedList = e.isActive('orderedList');
-				active.blockquote = e.isActive('blockquote');
-			}
-		});
+        $effect(() => {
+                if (!element || !documentState.isLoaded || !documentState.activeSceneId) return;
 
-		// Listen for scene changes to update the editor content
-		$effect(() => {
-			if (documentState.activeScene && newEditor.getHTML() !== documentState.activeScene.content) {
-				// Prevent loop updating
-				if (documentState.activeScene.content === '') {
-					newEditor.commands.clearContent();
-				} else {
-					newEditor.commands.setContent(documentState.activeScene.content);
-				}
-			}
-		});
+                const newEditor = new Editor({
+                        element: element,
+                        extensions: [
+                                StarterKit,
+                                CharacterCount,
+                                Collaboration.configure({
+                                        document: documentState.ydoc,
+                                        field: 'scene-' + documentState.activeSceneId,
+                                })
+                        ],
+                        editorProps: {
+                                attributes: {
+                                        class: 'prose prose-zinc prose-lg max-w-none focus:outline-none min-h-[500px]',
+                                },
+                        },
+                        onTransaction: ({ editor: e }) => {
+                                active.bold = e.isActive('bold');
+                                active.italic = e.isActive('italic');
+                                active.h1 = e.isActive('heading', { level: 1 });
+                                active.h2 = e.isActive('heading', { level: 2 });
+                                active.bulletList = e.isActive('bulletList');
+                                active.orderedList = e.isActive('orderedList');
+                                active.blockquote = e.isActive('blockquote');
+                        },
+                        onUpdate: ({ editor: e }) => {
+                                if (documentState.activeScene) {
+                                        documentState.activeScene.wordCount = e.storage.characterCount.words();
+                                }
+                        }
+                });
 
-		documentState.activeScene!.wordCount = newEditor.storage.characterCount.words();
-		editor = newEditor;
-	});
+                // Initial word count assignment
+                if (documentState.activeScene) {
+                        documentState.activeScene.wordCount = newEditor.storage.characterCount.words();
+                }
 
-	onDestroy(() => {
-		if (editor) {
-			editor.destroy();
-		}
-	});
+                editor = newEditor;
 
-	function handleUpdate(e: Editor) {
-		if (documentState.activeScene) {
-			documentState.activeScene.wordCount = e.storage.characterCount.words();
-			documentState.activeScene.content = e.getHTML();
-		}
-	}
+                return () => {
+                        newEditor.destroy();
+                };
+        });
 
 </script>
 
