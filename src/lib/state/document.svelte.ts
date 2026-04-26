@@ -7,8 +7,8 @@ export interface ReviewRecipe {
         title: string;
         prompt: string;
         isActive: boolean;
-        providerId?: string; // Links to ProviderProfile.id
-        modelId?: string;    // Override default model
+        tier: 'fast' | 'balanced' | 'deep';
+        outputFormat: 'text' | 'json';
 }
 
 export interface ContextItem {

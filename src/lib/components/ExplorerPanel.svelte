@@ -133,22 +133,29 @@
 	}
 
 	function recalculateNumbering() {
-		let currentChapter = 0;
-		let currentScene = 0;
-		let lastOrigChapter = -1;
+                let currentChapter = 0;
+                let currentScene = 0;
+                let lastOrigChapter = -1;
 
-		documentState.project.scenes.forEach(scene => {
-			if (scene.chapterNumber !== lastOrigChapter) {
-				currentChapter++;
-				currentScene = 1;
-				lastOrigChapter = scene.chapterNumber;
-			} else {
-				currentScene++;
-			}
-			scene.chapterNumber = currentChapter;
-			scene.sceneNumber = currentScene;
-		});
-	}
+                documentState.project.scenes.forEach(scene => {
+                        if (scene.chapterNumber !== lastOrigChapter) {
+                                currentChapter++;
+                                currentScene = 1;
+                                lastOrigChapter = scene.chapterNumber;
+                        } else {
+                                currentScene++;
+                        }
+                        
+                        // Update title if it matches the default 'Scene X' format
+                        const defaultTitleRegex = /^Scene \d+$/;
+                        if (defaultTitleRegex.test(scene.title)) {
+                                scene.title = `Scene ${currentScene}`;
+                        }
+
+                        scene.chapterNumber = currentChapter;
+                        scene.sceneNumber = currentScene;
+                });
+        }
 
 	function deleteScene(id: string) {
 		documentState.project.scenes = documentState.project.scenes.filter(s => s.id !== id);

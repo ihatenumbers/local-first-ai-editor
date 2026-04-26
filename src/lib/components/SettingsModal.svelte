@@ -38,8 +38,37 @@
             </button>
         </header>
 
+        
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
-            <p class="text-sm text-zinc-600 mb-4">
+            
+            <div class="mb-4 space-y-3 pb-6 border-b border-zinc-200">
+                <h3 class="text-sm font-bold text-zinc-700 uppercase tracking-wider">Model Routing (Tiers)</h3>
+                <p class="text-xs text-zinc-500 mb-2">Assign your configured profiles to specific capability tiers.</p>
+                
+                {#each (['fast', 'balanced', 'deep'] as const) as tier}
+                    <div class="bg-zinc-50 p-3 rounded border border-zinc-200 grid grid-cols-[100px_1fr_1fr] gap-3 items-center">
+                        <span class="text-xs font-bold text-zinc-700 capitalize">{tier}</span>
+                        <select 
+                            bind:value={settingsState.tiers[tier].providerId}
+                            class="w-full text-xs p-1.5 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500 bg-white"
+                        >
+                            {#each settingsState.profiles as p}
+                                <option value={p.id}>{p.name}</option>
+                            {/each}
+                        </select>
+                        <input 
+                            type="text" 
+                            bind:value={settingsState.tiers[tier].modelId}
+                            placeholder="Model ID (e.g. gpt-4o)"
+                            class="w-full text-xs p-1.5 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500"
+                        />
+                    </div>
+                {/each}
+            </div>
+
+            <h3 class="text-sm font-bold text-zinc-700 uppercase tracking-wider">API Profiles</h3>
+            <p class="text-xs text-zinc-600 mb-4">
+
                 Configure your API keys and endpoints. These are stored locally in your browser's <code>localStorage</code> securely.
             </p>
 

@@ -1,4 +1,24 @@
-import { browser } from '$app/environment';
+const fs = require('fs');
+
+// 1. Update document.svelte.ts
+const docPath = 'src/lib/state/document.svelte.ts';
+let docText = fs.readFileSync(docPath, 'utf8');
+
+docText = docText.replace(/export interface ReviewRecipe \{[^}]+\}/m, `export interface ReviewRecipe {
+        id: string;
+        title: string;
+        prompt: string;
+        isActive: boolean;
+        tier: 'fast' | 'balanced' | 'deep';
+        outputFormat: 'text' | 'json';
+}`);
+
+fs.writeFileSync(docPath, docText);
+
+
+// 2. Update settings.svelte.ts
+const setPath = 'src/lib/state/settings.svelte.ts';
+let setText = `import { browser } from '$app/environment';
 
 export interface ProviderProfile {
     id: string;
@@ -76,3 +96,6 @@ export class SettingsState {
 }
 
 export const settingsState = new SettingsState();
+`;
+fs.writeFileSync(setPath, setText);
+console.log('State modifications complete.');

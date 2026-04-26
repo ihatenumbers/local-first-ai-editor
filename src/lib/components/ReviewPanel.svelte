@@ -1,9 +1,10 @@
 <script lang="ts">
 	import { documentState } from '$lib/state/document.svelte';
 	import { uiState } from '$lib/state/ui.svelte';
-	import { Plus, Trash2 } from 'lucide-svelte';
+	import { Plus, Trash2, ChevronDown, ChevronRight, MessageSquare, Code } from 'lucide-svelte';
 
 	let isResizing = $state(false);
+        let expandedRecipes = $state<Record<string, boolean>>({});
 
 	function onPointerDown(e: PointerEvent) {
 		isResizing = true;
@@ -26,9 +27,12 @@
                                 id: crypto.randomUUID(),
                                 title: 'New Review Instructions',
                                 prompt: '',
-                                isActive: true
+                                isActive: true,
+                                tier: 'balanced',
+                                outputFormat: 'text'
                         });
-                }        }
+                }
+        }
 	function deleteRecipe(id: string) {
 		if (documentState.activeScene) documentState.activeScene.reviewRecipes = documentState.activeScene.reviewRecipes.filter(r => r.id !== id);
 	}
