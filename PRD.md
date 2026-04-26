@@ -29,9 +29,10 @@ The application will utilize an ultrawide-optimized 4-column layout, which grace
 * **Column 3: The Active Review / Inbox (Center Right)**
     * Displays AI-generated critiques natively aligned with the corresponding paragraphs.
     * Uses a localized commenting model (e.g., `tiptap-comment-extension`) rather than inline text replacement.
+    * **Review Recipes Panel:** A dynamic array of modular "Recipe Cards." Each card has an active toggle switch (boolean), an editable title, an editable prompt instruction, and a delete button. Recipes can be toggled on/off to assemble custom semantic linting criteria.
 * **Column 4: The Context Board (Far Right)**
-    * Configurable plain-text panels: *Characters, Locations, Story So Far, Writing Objectives*.
-    * **Review Recipes Panel:** A simple multi-line editable text area where each line represents an active prompt/recipe (e.g., "Check for passive voice", "Are the senses utilized here?").
+    * **Writing Objectives:** A fixed, permanent text area capturing the immediate scene goals.
+    * **Dynamic Context Items:** A vertically stacked list of editable cards (for *Characters, Locations, Lore, etc.*), each featuring a configurable title and content body, which can be created, edited, and deleted dynamically.
 
 ## 4. Functional Requirements
 
