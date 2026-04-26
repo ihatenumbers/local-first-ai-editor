@@ -8,10 +8,10 @@ describe('DocumentState', () => {
         expect(doc.activeScene?.sceneNumber).toBe(1);
         expect(doc.activeScene?.wordCount).toBe(0);
         expect(doc.activeScene?.todoList).toEqual([]);
-        expect(doc.project.reviewRecipes.length).toBe(0);
+        expect(doc.activeScene?.reviewRecipes.length).toBe(0);
         
         expect(doc.activeScene?.objectivesText).toBe('');
-        expect(doc.project.contextItems.length).toBe(0);
+        expect(doc.activeScene?.contextItems.length).toBe(0);
     });
 
     it('can update values', () => {

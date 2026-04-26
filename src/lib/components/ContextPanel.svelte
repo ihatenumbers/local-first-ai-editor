@@ -24,15 +24,17 @@
 	}
 
 	function addContext() {
-		documentState.project.contextItems.push({
-			id: crypto.randomUUID(),
-			title: 'New Context Item',
-			content: ''
-		});
-	}
+if (documentState.activeScene) {
+documentState.activeScene.contextItems.push({
+id: crypto.randomUUID(),
+title: 'New Context Item',
+content: ''
+});
+}
+}
 
 	function deleteContext(id: string) {
-		documentState.project.contextItems = documentState.project.contextItems.filter(c => c.id !== id);
+		if (documentState.activeScene) { documentState.activeScene.contextItems = documentState.activeScene.contextItems.filter(c => c.id !== id); }
 	}
 </script>
 
@@ -78,7 +80,7 @@
 			</div>
 
 			<div class="space-y-3">
-				{#each documentState.project.contextItems as item (item.id)}
+				{#each (documentState.activeScene?.contextItems || []) as item (item.id)}
 					<div class="bg-white border border-zinc-200 rounded-md p-3 shadow-sm group">
 						<div class="flex items-center justify-between mb-2">
 							<input 
@@ -103,7 +105,7 @@
 					</div>
 				{/each}
 
-				{#if documentState.project.contextItems.length === 0}
+				{#if (documentState.activeScene?.contextItems || []).length === 0}
 					<div class="text-center p-4 border border-dashed border-zinc-300 rounded-md text-zinc-500 text-sm">
 						No extra context added.
 					</div>

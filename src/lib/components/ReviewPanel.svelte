@@ -21,16 +21,16 @@
 	}
 
 	function addRecipe() {
-		documentState.project.reviewRecipes.push({
-			id: crypto.randomUUID(),
-			title: 'New Review Instructions',
-			prompt: '',
-			isActive: true
-		});
-	}
-
+                if (documentState.activeScene) {
+                        documentState.activeScene.reviewRecipes.push({
+                                id: crypto.randomUUID(),
+                                title: 'New Review Instructions',
+                                prompt: '',
+                                isActive: true
+                        });
+                }        }
 	function deleteRecipe(id: string) {
-		documentState.project.reviewRecipes = documentState.project.reviewRecipes.filter(r => r.id !== id);
+		if (documentState.activeScene) documentState.activeScene.reviewRecipes = documentState.activeScene.reviewRecipes.filter(r => r.id !== id);
 	}
 </script>
 
@@ -63,7 +63,7 @@
 			</div>
 			
 						<div class="space-y-3">
-				{#each documentState.project.reviewRecipes as recipe (recipe.id)}
+				{#each (documentState.activeScene?.reviewRecipes || []) as recipe (recipe.id)}
 					<div class="bg-white border border-zinc-200 rounded-md p-3 shadow-sm group">
 						<div class="flex items-center justify-between mb-2">
 							<div class="flex items-center gap-2 flex-1">
@@ -95,7 +95,7 @@
 					</div>
 				{/each}
 
-				{#if documentState.project.reviewRecipes.length === 0}
+				{#if (documentState.activeScene?.reviewRecipes || []).length === 0}
 					<div class="text-center p-4 border border-dashed border-zinc-300 rounded-md text-zinc-500 text-sm">
 						No active recipes. Add one to analyze your scene.
 					</div>

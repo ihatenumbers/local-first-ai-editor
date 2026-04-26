@@ -159,50 +159,92 @@
 		recalculateNumbering();
 	}
 
-	function addScene() {
-		const currentChapter = documentState.activeScene?.chapterNumber || 1;
-		const scenesInChapter = documentState.project.scenes.filter(s => s.chapterNumber === currentChapter);
-		const newSceneNumber = scenesInChapter.length > 0 
-			? Math.max(...scenesInChapter.map(s => s.sceneNumber)) + 1 
-			: 1;
+	
+let showCreateModal = $state(false);
+let createModalType = $state<'chapter' | 'scene'>('scene');
+let copyRecipes = $state(true);
+let copyContext = $state(true);
 
-		const id = crypto.randomUUID();
-		
-		documentState.project.scenes.push({
-			id,
-			chapterNumber: currentChapter,
-			sceneNumber: newSceneNumber,
-			title: `Scene ${newSceneNumber}`,
-			content: '',
-			objectivesText: '',
-			todoList: [],
-			wordCount: 0
-		});
+function openCreateModal(type: 'chapter' | 'scene') {
+createModalType = type;
+showCreateModal = true;
+}
 
-		documentState.activeSceneId = id;
-		expandedChapters[currentChapter] = true;
-	}
+function cancelCreate() {
+showCreateModal = false;
+}
 
-	function addChapter() {
-		const newChapterNumber = documentState.project.scenes.length > 0
-			? Math.max(...documentState.project.scenes.map(s => s.chapterNumber)) + 1
-			: 1;
+function confirmCreate() {
+showCreateModal = false;
+if (createModalType === 'scene') {
+executeAddScene();
+} else {
+executeAddChapter();
+}
+}
 
-		const id = crypto.randomUUID();
-		
-		documentState.project.scenes.push({
-			id,
-			chapterNumber: newChapterNumber,
-			sceneNumber: 1,
-			title: `Scene 1`,
-			content: '',
-			objectivesText: '',
-			todoList: [],
-			wordCount: 0
-		});
+function getCopiedData() {
+const currentScene = documentState.activeScene;
 
-		documentState.activeSceneId = id;
-	}
+return {
+                        recipes: copyRecipes && currentScene ? currentScene.reviewRecipes.map(r => ({ ...r, id: crypto.randomUUID() })) : [],
+                        context: copyContext && currentScene ? currentScene.contextItems.map(c => ({ ...c, id: crypto.randomUUID() })) : [],
+        };
+}
+
+function executeAddScene() {
+        const currentChapter = documentState.activeScene?.chapterNumber || 1;
+const scenesInChapter = documentState.project.scenes.filter(s => s.chapterNumber === currentChapter);
+const newSceneNumber = scenesInChapter.length > 0 
+? Math.max(...scenesInChapter.map(s => s.sceneNumber)) + 1 
+: 1;
+
+const id = crypto.randomUUID();
+const { recipes, context } = getCopiedData();
+
+documentState.project.scenes.push({
+id,
+chapterNumber: currentChapter,
+sceneNumber: newSceneNumber,
+title: `Scene ${newSceneNumber}`,
+content: '',
+objectivesText: '',
+todoList: [],
+reviewRecipes: recipes,
+contextItems: context,
+wordCount: 0
+});
+
+documentState.activeSceneId = id;
+expandedChapters[currentChapter] = true;
+}
+
+function executeAddChapter() {
+const newChapterNumber = documentState.project.scenes.length > 0
+? Math.max(...documentState.project.scenes.map(s => s.chapterNumber)) + 1
+: 1;
+
+const id = crypto.randomUUID();
+const { recipes, context } = getCopiedData();
+
+documentState.project.scenes.push({
+id,
+chapterNumber: newChapterNumber,
+sceneNumber: 1,
+title: `Scene 1`,
+content: '',
+objectivesText: '',
+todoList: [],
+reviewRecipes: recipes,
+contextItems: context,
+wordCount: 0
+});
+
+documentState.activeSceneId = id;
+expandedChapters[newChapterNumber] = true;
+}
+
+	
 </script>
 
 <aside class="w-64 flex-col border-r border-zinc-200 bg-zinc-100/50 flex shrink-0 transition-all h-full">
@@ -210,14 +252,14 @@
 		<h2 class="text-xs font-bold uppercase tracking-wider text-zinc-500">Explorer</h2>
 		<div class="flex gap-3">
 			<button 
-				onclick={addChapter}
+				onclick={() => openCreateModal("chapter")}
 				class="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
 				title="Add Chapter"
 			>
 				+ Ch
 			</button>
 			<button 
-				onclick={addScene}
+				onclick={() => openCreateModal("scene")}
 				class="text-xs font-medium text-indigo-600 hover:text-indigo-700 transition-colors"
 				title="Add Scene"
 			>
@@ -318,3 +360,26 @@
 		{/each}
 	</div>
 </aside>
+{#if showCreateModal}
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/30 backdrop-blur-sm">
+<div class="bg-white p-6 rounded-lg shadow-xl w-80 text-left border border-zinc-200">
+<h3 class="font-bold text-lg mb-2 text-zinc-800">Add {createModalType === 'scene' ? 'Scene' : 'Chapter'}</h3>
+<p class="text-sm text-zinc-500 mb-5">Would you like to copy settings from the current scene?</p>
+
+<label class="flex items-center gap-3 mb-3 text-sm text-zinc-700 font-medium cursor-pointer">
+<input type="checkbox" bind:checked={copyRecipes} class="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4" />
+Copy Active Review Recipes
+</label>
+
+<label class="flex items-center gap-3 mb-6 text-sm text-zinc-700 font-medium cursor-pointer">
+<input type="checkbox" bind:checked={copyContext} class="rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4" />
+Copy Context Board
+</label>
+
+<div class="flex justify-end gap-2 pt-2 border-t border-zinc-100">
+<button class="px-4 py-2 text-sm font-medium text-zinc-500 hover:bg-zinc-100 rounded-md transition-colors" onclick={cancelCreate}>Cancel</button>
+<button class="px-4 py-2 text-sm font-medium bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors shadow-sm" onclick={confirmCreate}>Create</button>
+</div>
+</div>
+</div>
+{/if}
