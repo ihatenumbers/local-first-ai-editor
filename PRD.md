@@ -52,7 +52,7 @@ The application will utilize an ultrawide-optimized 4-column layout, which grace
 * **Zero Server Runtime:** The application must compile to static HTML/CSS/JS. There will be no Node.js server required at runtime.
 * **Privacy:** The user's text must never leave their local machine unless they explicitly trigger an AI review, at which point it is sent only to the API endpoint they configured.
 
-## 6. Out of Scope for Phase 1 (Deferred to Future Phases)
+## 6. Out of Scope for Phase 1 (Deferred to Phase 2)
 * **Inline Diff/Tracked Changes:** We will focus purely on margin comments/critiques for the MVP. Actual inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) are deferred.
 * **WebGPU / Local Browser AI:** Downloading 4GB+ quantized models via WebLLM or Transformers.js is deferred until the core API-driven engine is stable.
 * **Complex Recipe Builder UI:** Creating a node-based or slider-based UI for prompts is deferred. Phase 1 relies on simple text lists.
