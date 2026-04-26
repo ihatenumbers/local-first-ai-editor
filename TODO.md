@@ -10,12 +10,12 @@ Before extracting components, we need a central place to hold the data so the pa
 
 ### Milestone 2: Component Extraction (Cleaning the Shell)
 Let's break that massive `+page.svelte` file into modular, manageable pieces inside a new `src/lib/components/` folder.
-- [ ] **Create `Header.svelte`:** Extract the sticky top toolbar (dashboard, save/load, toggle icons) plus add an extra toggle for ReviewPanel just to the left of the button for ContextPanel.
-- [ ] **Create `ExplorerPanel.svelte`:** Extract the far-left file tree UI.
-- [ ] **Create `ReviewPanel.svelte`:** Extract the inner-right panel (Active Recipes & To-Dos).
-- [ ] **Create `ContextPanel.svelte`:** Extract the far-right panel (Writing Objectives, Characters, Locations).
-- [ ] **Update `+page.svelte`:** Import these new components so your main layout file is clean and just handles the Flexbox structure.
-- [ ] **Update Code and Browser tests to confirm Milestones 1 and 2 are working **
+- [x] **Create `Header.svelte`:** Extract the sticky top toolbar (dashboard, save/load, toggle icons) plus add an extra toggle for ReviewPanel just to the left of the button for ContextPanel.
+- [x] **Create `ExplorerPanel.svelte`:** Extract the far-left file tree UI.
+- [x] **Create `ReviewPanel.svelte`:** Extract the inner-right panel (Active Recipes & To-Dos).
+- [x] **Create `ContextPanel.svelte`:** Extract the far-right panel (Writing Objectives, Characters, Locations).
+- [x] **Update `+page.svelte`:** Import these new components so your main layout file is clean and just handles the Flexbox structure.
+- [x] **Update Code and Browser tests to confirm Milestones 1 and 2 are working **
 
 ### Milestone 3: The Tiptap Editor (The Core)
 Time to replace the `contenteditable` placeholder with a real, robust text editor.
