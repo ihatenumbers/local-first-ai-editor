@@ -10,7 +10,7 @@ describe('DocumentState', () => {
         expect(doc.todoList).toEqual([]);
         expect(doc.reviewRecipes.length).toBe(2);
         
-        expect(doc.objectivesText).toBe('Establish the tension between the two leads. Raise the stakes for the next chapter.');
+        expect(doc.objectivesText).toBe('Add your writing objectives here - when the scene or document is finished, what will it have achieved');
         expect(doc.contextItems.length).toBe(2);
     });
 

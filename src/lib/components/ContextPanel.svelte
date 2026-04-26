@@ -57,7 +57,7 @@
 			<textarea 
 				bind:value={documentState.objectivesText}
 				class="w-full rounded-md border-zinc-300 shadow-sm text-sm p-2 bg-white resize-none h-24 focus:ring-1 focus:ring-indigo-500 focus:outline-none" 
-				placeholder="Establish the tension between the two leads. Raise the stakes for the next chapter."
+				placeholder="Add your writing objectives here - when the scene or document is finished, what will it have achieved?"
 			></textarea>
 		</div>
 
