@@ -19,10 +19,10 @@ Let's break that massive `+page.svelte` file into modular, manageable pieces ins
 
 ### Milestone 3: The Tiptap Editor (The Core)
 Time to replace the `contenteditable` placeholder with a real, robust text editor.
-- [ ] **Create `Tiptap.svelte`:** Initialize a vanilla Tiptap instance using `@tiptap/core` and `@tiptap/starter-kit` inside an `onMount` lifecycle hook.
-- [ ] **Bind the Editor:** Attach the Tiptap instance to a `bind:this` div reference in your Svelte markup.
-- [ ] **Character/Word Count:** Add the `@tiptap/extension-character-count` plugin and wire its output to your `document.svelte.ts` state so the Header updates as you type.
-- [ ] **Update Code and Browser tests to confirm Milestones 1, 2 and 3 are working **
+- [x] **Create `Tiptap.svelte`:** Initialize a vanilla Tiptap instance using `@tiptap/core` and `@tiptap/starter-kit` inside an `onMount` lifecycle hook.
+- [x] **Bind the Editor:** Attach the Tiptap instance to a `bind:this` div reference in your Svelte markup.
+- [x] **Character/Word Count:** Add the `@tiptap/extension-character-count` plugin and wire its output to your `document.svelte.ts` state so the Header updates as you type.
+- [x] **Update Code and Browser tests to confirm Milestones 1, 2 and 3 are working **
 
 ### Milestone 4: Yjs & Offline Storage (Persistence)
 This is where the magic happens. We want everything saved to the browser automatically.

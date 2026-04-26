@@ -7,10 +7,11 @@
 	import ExplorerPanel from '$lib/components/ExplorerPanel.svelte';
 	import ReviewPanel from '$lib/components/ReviewPanel.svelte';
 	import ContextPanel from '$lib/components/ContextPanel.svelte';
+	import Tiptap from '$lib/components/Tiptap.svelte';
 
 	// Placeholder test data setup directly in the store, 
 	// overriding default just to maintain the mock UI visually!
-	documentState.wordCount = 1245;
+	// documentState.wordCount is now managed by Tiptap
 	documentState.todoList = ['Foreshadow the amulet', 'Describe the lighting', 'Fix dialogue pacing in middle'];
 	documentState.currentChapter = 1;
 	documentState.currentScene = 2;
@@ -27,11 +28,8 @@
 		<Header />
 		
 		<div class="flex-1 overflow-y-auto w-full">
-			<div class="mx-auto w-full max-w-2xl px-8 py-16">
-				<h1 class="text-4xl font-bold text-zinc-900 mb-8 outline-none" contenteditable="true">The Dark Forest</h1>
-				<p class="text-lg text-zinc-700 outline-none leading-relaxed" contenteditable="true">
-					The trees loomed like ancient sentinels. <i>(Tiptap will mount here...)</i>
-				</p>
+			<div class="w-full px-8 sm:px-12 md:px-16 py-16">
+				<Tiptap />
 			</div>
 		</div>
 	</section>
