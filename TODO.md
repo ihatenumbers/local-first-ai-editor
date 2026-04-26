@@ -48,26 +48,28 @@ This is where the magic happens. We want everything saved to the browser automat
 
 ### Milestone 5: AI Provider Profiles & Context Assembly
 Getting ready for the AI integration, supporting multiple models and routing specific recipes to specific AI systems.
-- [ ] **Define AI Profiles State:** Create a store (e.g., in `document.svelte.ts` or a new `settings.svelte.ts`) to manage an array of `ProviderProfile` objects (Name, API Key, Base URL, default Model ID, type: OpenAI/Anthropic/Gemini/Local).
-- [ ] **Create a Settings Modal:** Build a UI to manage these AI Provider Profiles and save them securely in the browser's `localStorage` or sync them via Yjs conditionally.
-- [ ] **Bind Recipes to Models:** Update the `ReviewRecipe` interface and the ReviewPanel UI so each recipe has a dropdown to select which `ProviderProfile` and Model it should specifically use (e.g., "Fast Typos" -> Ollama Llama 3; "Deep Critique" -> OpenRouter Claude 3.5 Sonnet).
-- [ ] **Build the Context Assembler:** Write a utility function that grabs the current Tiptap text content, grabs the active "Writing Objectives" and "Characters", and concatenates them into a single System Prompt string.
-- [ ] **Update Code and Browser tests to confirm Milestones 5 is working **
+- [x] **Define AI Profiles State:** Create a store (e.g., in `document.svelte.ts` or a new `settings.svelte.ts`) to manage an array of `ProviderProfile` objects (Name, API Key, Base URL, default Model ID, type: OpenAI/Anthropic/Gemini/Local).
+- [x] **Create a Settings Modal:** Build a UI to manage these AI Provider Profiles and save them securely in the browser's `localStorage` or sync them via Yjs conditionally.
+- [x] **Bind Recipes to Models:** Update the `ReviewRecipe` interface and the ReviewPanel UI so each recipe has a dropdown to select which `ProviderProfile` and Model it should specifically use (e.g., "Fast Typos" -> Ollama Llama 3; "Deep Critique" -> OpenRouter Claude 3.5 Sonnet).
+- [x] **Build the Context Assembler:** Write a utility function that grabs the current Tiptap text content, grabs the active "Writing Objectives" and "Characters", and concatenates them into a single System Prompt string.
+- [x] **Update Code and Browser tests to confirm Milestones 5 is working **
 
 ### Milestone 6: The AI Review Logic (Async & Streaming)
-Wiring up the LLMs with real-time feedback.
-- [ ] **The Fetch Engine / Proxy:** Write an async fetch handler. **Note:** To avoid browser CORS issues with native OpenAI/Anthropic APIs, we will likely need a SvelteKit `+server.ts` pass-through route, or strictly rely on CORS-friendly endpoints like OpenRouter and Local LLMs.
-- [ ] **Unified API Adapters:** Build a generalized request handler that formats the request for OpenAI-compatible endpoints (OpenRouter, Ollama, vLLM, Gemini-compatibility-mode) and a separate formatter if native Anthropic endpoint is needed.
+Wiring up the LLMs with real-time feedback and robust parsing.
+- [ ] **The Fetch Engine / Proxy:** Write an async fetch handler (a SvelteKit `+server.ts` pass-through route) to handle CORS safely for external APIs.
+- [ ] **Unified API Adapters:** Build a generalized request handler that formats the request for OpenAI-compatible endpoints and handles Streaming Text vs. JSON modes based on the recipe's configuration.
+- [ ] **Robust JSON Parsing:** Implement a fallback extractor. If an LLM returns malformed JSON or wraps it in markdown (```json ... ```), use regex to strip it. If that fails, optionally trigger a fast retry or pass it to a secondary "JSON Cleaner" function.
 - [ ] **Trigger Mechanism:** Add "Run" buttons next to your Active Review Recipes. When clicked, it passes the Context + specific Recipe to the chosen Model.
 - [ ] **Handle Streaming Output:** Process `ReadableStream` chunks so the AI feedback cards in the `ReviewPanel.svelte` sidebar type out in real-time.
 - [ ] **Update Code and Browser tests to confirm Milestone 6 is working **
 
 ### Milestone 7: The "Code Review" UX (Annotations)
 Connecting the AI's thoughts back to the specific words in the editor.
+- [ ] **Exact String Matching Strategy:** Instruct the LLM in JSON-mode recipes to always return `{ "original_text": "...", "suggestion": "...", "reasoning": "..." }`.
 - [ ] **Implement Comments:** Add a custom Tiptap mark (or use an open-source comment extension) to allow wrapping text ranges in highlighted backgrounds.
-- [ ] **Anchor AI Feedback:** When the AI suggests a fix, write logic to find that sentence in the Tiptap document and wrap it in a comment mark.
+- [ ] **Anchor AI Feedback:** When the JSON is successfully parsed, write logic that searches the Tiptap document for the exact `original_text` and wraps it in a comment mark tied to a unique ID.
 - [ ] **Resolve/Ignore:** Add buttons to the AI feedback cards in the sidebar to remove the highlight from the text (Ignore) or trigger a diff/replacement (Resolve).
-- [ ] **Update Code and Browser tests to confirm Milestones 1, 2, 3, 4, 5, and 6 are working **
+- [ ] **Update Code and Browser tests to confirm Milestones 7 is working **
 
 ***
 

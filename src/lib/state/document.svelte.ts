@@ -7,6 +7,8 @@ export interface ReviewRecipe {
         title: string;
         prompt: string;
         isActive: boolean;
+        providerId?: string; // Links to ProviderProfile.id
+        modelId?: string;    // Override default model
 }
 
 export interface ContextItem {

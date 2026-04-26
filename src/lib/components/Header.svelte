@@ -64,7 +64,7 @@
 			<PanelRight size={18} />
 		</button>
 
-		<div class="h-4 w-px bg-zinc-200 mx-1"></div> <button class="p-1.5 rounded hover:bg-zinc-100 transition-colors text-zinc-500" title="Settings">
+<div class="h-4 w-px bg-zinc-200 mx-1"></div> <button class="p-1.5 rounded hover:bg-zinc-100 transition-colors text-zinc-500" title="Settings" onclick={() => uiState.showSettings = true}>
 			<Settings size={18} />
 		</button>
 	</div>

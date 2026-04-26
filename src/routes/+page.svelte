@@ -8,6 +8,7 @@
 	import ReviewPanel from '$lib/components/ReviewPanel.svelte';
 	import ContextPanel from '$lib/components/ContextPanel.svelte';
 	import Tiptap from '$lib/components/Tiptap.svelte';
+        import SettingsModal from '$lib/components/SettingsModal.svelte';
 
 </script>
 
@@ -39,5 +40,9 @@
                 <div class="flex h-full w-full items-center justify-center">
                         <p class="text-zinc-500 font-medium pb-20">Loading Project...</p>
                 </div>
+        {/if}
+
+        {#if uiState.showSettings}
+                <SettingsModal />
         {/if}
 </main>
