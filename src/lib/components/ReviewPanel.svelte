@@ -21,16 +21,16 @@
 	}
 
 	function addRecipe() {
-		documentState.reviewRecipes.push({
+		documentState.project.reviewRecipes.push({
 			id: crypto.randomUUID(),
-			title: 'New Recipe',
+			title: 'New Review Instructions',
 			prompt: '',
 			isActive: true
 		});
 	}
 
 	function deleteRecipe(id: string) {
-		documentState.reviewRecipes = documentState.reviewRecipes.filter(r => r.id !== id);
+		documentState.project.reviewRecipes = documentState.project.reviewRecipes.filter(r => r.id !== id);
 	}
 </script>
 
@@ -62,8 +62,8 @@
 				</button>
 			</div>
 			
-			<div class="space-y-3">
-				{#each documentState.reviewRecipes as recipe (recipe.id)}
+						<div class="space-y-3">
+				{#each documentState.project.reviewRecipes as recipe (recipe.id)}
 					<div class="bg-white border border-zinc-200 rounded-md p-3 shadow-sm group">
 						<div class="flex items-center justify-between mb-2">
 							<div class="flex items-center gap-2 flex-1">
@@ -94,8 +94,8 @@
 						></textarea>
 					</div>
 				{/each}
-				
-				{#if documentState.reviewRecipes.length === 0}
+
+				{#if documentState.project.reviewRecipes.length === 0}
 					<div class="text-center p-4 border border-dashed border-zinc-300 rounded-md text-zinc-500 text-sm">
 						No active recipes. Add one to analyze your scene.
 					</div>
@@ -106,7 +106,7 @@
 		<div>
 			<div class="flex items-center justify-between mb-2">
 				<h3 class="text-sm font-semibold text-zinc-700">Scene To-Dos</h3>
-				<span class="text-xs font-mono bg-zinc-200 px-1.5 py-0.5 rounded text-zinc-600">{documentState.todoList.length}</span>
+				<span class="text-xs font-mono bg-zinc-200 px-1.5 py-0.5 rounded text-zinc-600">{documentState.activeScene?.todoList.length || 0}</span>
 			</div>
 			<textarea class="w-full rounded-md border-zinc-300 shadow-sm text-sm p-2 bg-white resize-none h-48 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="- Foreshadow the amulet&#10;- Describe the lighting&#10;- Fix dialogue pacing in middle"></textarea>
 		</div>

@@ -40,9 +40,7 @@
 					class: 'prose prose-zinc prose-lg max-w-none focus:outline-none min-h-[500px]',
 				},
 			},
-			onUpdate: ({ editor: e }) => {
-				documentState.wordCount = e.storage.characterCount.words();
-			},
+			onUpdate: ({ editor: e }) => handleUpdate(e),
 			onTransaction: ({ editor: e }) => {
 				active.bold = e.isActive('bold');
 				active.italic = e.isActive('italic');
@@ -54,7 +52,19 @@
 			}
 		});
 
-		documentState.wordCount = newEditor.storage.characterCount.words();
+		// Listen for scene changes to update the editor content
+		$effect(() => {
+			if (documentState.activeScene && newEditor.getHTML() !== documentState.activeScene.content) {
+				// Prevent loop updating
+				if (documentState.activeScene.content === '') {
+					newEditor.commands.clearContent();
+				} else {
+					newEditor.commands.setContent(documentState.activeScene.content);
+				}
+			}
+		});
+
+		documentState.activeScene!.wordCount = newEditor.storage.characterCount.words();
 		editor = newEditor;
 	});
 
@@ -63,6 +73,14 @@
 			editor.destroy();
 		}
 	});
+
+	function handleUpdate(e: Editor) {
+		if (documentState.activeScene) {
+			documentState.activeScene.wordCount = e.storage.characterCount.words();
+			documentState.activeScene.content = e.getHTML();
+		}
+	}
+
 </script>
 
 <div class="flex flex-col w-full h-full">

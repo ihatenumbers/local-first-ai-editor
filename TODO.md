@@ -31,13 +31,20 @@ Before persisting, we need reactive data structures for the Review and Context p
 - [x] **ContextPanel UI (`Context Board`):** Keep a fixed "Writing Objectives" area, but implement a dynamic list of cards for other context items (Characters, Locations, etc.) with editable titles, contents, and delete buttons. Add an "+ Add Context" action.
 - [x] **Update Code and Browser tests to confirm Milestone 4A is working**
 
-### Milestone 4B: Yjs & Offline Storage (Persistence)
+### Milestone 4B: Project Hierarchy & Navigation
+Before attempting to save our flat data state, we must introduce the concept of "Scenes" and "Projects" into our state hierarchy so the "Save" action creates specific scene snapshots.
+- [ ] **Refactor `document.svelte.ts`:** Create new `Scene` and `Project` interfaces. Move `todoList`, `objectivesText`, and `content` (from Editor) inside the `Scene` interface. Make `ReviewRecipe` and `ContextItem` collections global to the Project.
+- [ ] **Implement Active State:** Introduce an `activeSceneId` pointer. Ensure that modifying a local panel updates the specific array living inside that active scene in the project state.
+- [ ] **Update `ExplorerPanel.svelte`:** Replace the hardcoded "CH 1 / SC 1" with a dynamically rendering `{#each}` loop over the project's scenes. Allow users to add a new scene and click existing scenes to change the active view.
+- [ ] **Update Code and Browser tests to confirm Milestone 4B is working**
+
+### Milestone 4C: Yjs & Offline Storage (Persistence)
 This is where the magic happens. We want everything saved to the browser automatically.
 - [ ] **Initialize Yjs:** Create a global `Y.Doc` instance in your state manager.
 - [ ] **Bind Tiptap to Yjs:** Install `@tiptap/extension-collaboration` and bind your Tiptap instance to a `Y.XmlFragment` inside your Yjs document. *(Note: Even though we are offline and single-player, this extension is the best way to handle Yjs text binding).*
 - [ ] **Setup `y-indexeddb`:** Connect your `Y.Doc` to an IndexedDB provider. 
-- [ ] **Persist Panel Data:** Sync your `ReviewRecipe[]` and `ContextItem[]` states with `Y.Array` or `Y.Map` within the Yjs document, ensuring your notes and manuscript are saved and versioned together.
-- [ ] **Update Code and Browser tests to confirm Milestone 4B is working **
+- [ ] **Persist Panel Data:** Sync your `Scene[]`, `ReviewRecipe[]`, and `ContextItem[]` states with `Y.Array` or `Y.Map` within the Yjs document, ensuring your notes and manuscript are saved and versioned together.
+- [ ] **Update Code and Browser tests to confirm Milestone 4C is working **
 
 ### Milestone 5: API Settings & Context Assembly
 Getting ready for the AI integration.

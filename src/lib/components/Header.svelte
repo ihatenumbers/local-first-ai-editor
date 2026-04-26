@@ -16,13 +16,17 @@
 <header class="sticky top-0 flex items-center justify-between border-b border-zinc-200 bg-white px-4 py-2 z-20 text-xs text-zinc-600">
 	
 	<div class="flex items-center font-mono font-medium bg-zinc-100 px-2 py-1 rounded">
-		CH {documentState.currentChapter} <span class="mx-2 text-zinc-300">/</span> SC {documentState.currentScene}
+		{#if documentState.activeScene}
+			CH {documentState.activeScene.chapterNumber} <span class="mx-2 text-zinc-300">/</span> SC {documentState.activeScene.sceneNumber}
+		{/if}
 	</div>
 
 	<div class="flex items-center gap-6">
 		<div class="flex items-center gap-4">
-			<span>{documentState.wordCount} Words</span>
-			<span class="flex items-center gap-1"><CheckSquare size={14} /> {documentState.todoList.length} To-Dos</span>
+			{#if documentState.activeScene}
+				<span>{documentState.activeScene.wordCount} Words</span>
+				<span class="flex items-center gap-1"><CheckSquare size={14} /> {documentState.activeScene.todoList.length} To-Dos</span>
+			{/if}
 		</div>
 		
 		<div class="h-4 w-px bg-zinc-200"></div> <div class="flex items-center gap-2">

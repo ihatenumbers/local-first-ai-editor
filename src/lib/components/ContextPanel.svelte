@@ -24,7 +24,7 @@
 	}
 
 	function addContext() {
-		documentState.contextItems.push({
+		documentState.project.contextItems.push({
 			id: crypto.randomUUID(),
 			title: 'New Context Item',
 			content: ''
@@ -32,7 +32,7 @@
 	}
 
 	function deleteContext(id: string) {
-		documentState.contextItems = documentState.contextItems.filter(c => c.id !== id);
+		documentState.project.contextItems = documentState.project.contextItems.filter(c => c.id !== id);
 	}
 </script>
 
@@ -54,11 +54,15 @@
 		
 		<div>
 			<h3 class="text-sm font-semibold text-zinc-700 mb-2">Writing Objectives</h3>
-			<textarea 
-				bind:value={documentState.objectivesText}
-				class="w-full rounded-md border-zinc-300 shadow-sm text-sm p-2 bg-white resize-none h-24 focus:ring-1 focus:ring-indigo-500 focus:outline-none" 
-				placeholder="Add your writing objectives here - when the scene or document is finished, what will it have achieved?"
-			></textarea>
+			{#if documentState.activeScene}
+				<textarea 
+					bind:value={documentState.activeScene.objectivesText}
+					class="w-full rounded-md border-zinc-300 shadow-sm text-sm p-2 bg-white resize-none h-24 focus:ring-1 focus:ring-indigo-500 focus:outline-none" 
+					placeholder="Add your writing objectives here - when the scene or document is finished, what will it have achieved?"
+				></textarea>
+			{:else}
+				<div class="text-sm text-zinc-500 italic p-2 border border-zinc-200 rounded-md bg-white">Select a scene to set objectives.</div>
+			{/if}
 		</div>
 
 		<div>
@@ -74,7 +78,7 @@
 			</div>
 
 			<div class="space-y-3">
-				{#each documentState.contextItems as item (item.id)}
+				{#each documentState.project.contextItems as item (item.id)}
 					<div class="bg-white border border-zinc-200 rounded-md p-3 shadow-sm group">
 						<div class="flex items-center justify-between mb-2">
 							<input 
@@ -99,7 +103,7 @@
 					</div>
 				{/each}
 
-				{#if documentState.contextItems.length === 0}
+				{#if documentState.project.contextItems.length === 0}
 					<div class="text-center p-4 border border-dashed border-zinc-300 rounded-md text-zinc-500 text-sm">
 						No extra context added.
 					</div>

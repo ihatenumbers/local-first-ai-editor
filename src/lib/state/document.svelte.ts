@@ -11,17 +11,52 @@ export interface ContextItem {
 	content: string;
 }
 
+export interface Scene {
+	id: string;
+	chapterNumber: number;
+	sceneNumber: number;
+	title: string;
+	content: string;
+	objectivesText: string;
+	todoList: string[];
+	wordCount: number;
+}
+
+export interface Project {
+	id: string;
+	title: string;
+	scenes: Scene[];
+	reviewRecipes: ReviewRecipe[];
+	contextItems: ContextItem[];
+}
+
+const defaultSceneId = crypto.randomUUID();
+
 export class DocumentState {
-        currentChapter = $state(1);
-        currentScene = $state(1);
-        wordCount = $state(0);
+	project = $state<Project>({
+		id: crypto.randomUUID(),
+		title: 'Untitled Project',
+		scenes: [
+			{
+				id: defaultSceneId,
+				chapterNumber: 1,
+				sceneNumber: 1,
+				title: 'Scene 1',
+				content: '',
+				objectivesText: '',
+				todoList: [],
+				wordCount: 0
+			}
+		],
+		reviewRecipes: [],
+		contextItems: []
+	});
 
-        todoList = $state<string[]>([]);
-        reviewRecipes = $state<ReviewRecipe[]>([]);
+	activeSceneId = $state<string>(defaultSceneId);
 
-        objectivesText = $state('');
-        
-		contextItems = $state<ContextItem[]>([]);
+	get activeScene(): Scene | undefined {
+		return this.project.scenes.find(s => s.id === this.activeSceneId);
+	}
 }
 
 export const documentState = new DocumentState();
