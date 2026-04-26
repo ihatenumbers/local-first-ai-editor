@@ -46,18 +46,21 @@ This is where the magic happens. We want everything saved to the browser automat
 - [x] **Persist Panel Data:** Sync your `Scene[]`, `ReviewRecipe[]`, and `ContextItem[]` states with `Y.Array` or `Y.Map` within the Yjs document, ensuring your notes and manuscript are saved and versioned together.
 - [x] **Update Code and Browser tests to confirm Milestone 4C is working **
 
-### Milestone 5: API Settings & Context Assembly
-Getting ready for the AI integration.
-- [ ] **Create a Settings Modal:** Build a simple UI to accept and securely store the user's AI API Key, Base URL (e.g., OpenAI, OpenRouter, or localhost), and Model Name in the browser's `localStorage`.
+### Milestone 5: AI Provider Profiles & Context Assembly
+Getting ready for the AI integration, supporting multiple models and routing specific recipes to specific AI systems.
+- [ ] **Define AI Profiles State:** Create a store (e.g., in `document.svelte.ts` or a new `settings.svelte.ts`) to manage an array of `ProviderProfile` objects (Name, API Key, Base URL, default Model ID, type: OpenAI/Anthropic/Gemini/Local).
+- [ ] **Create a Settings Modal:** Build a UI to manage these AI Provider Profiles and save them securely in the browser's `localStorage` or sync them via Yjs conditionally.
+- [ ] **Bind Recipes to Models:** Update the `ReviewRecipe` interface and the ReviewPanel UI so each recipe has a dropdown to select which `ProviderProfile` and Model it should specifically use (e.g., "Fast Typos" -> Ollama Llama 3; "Deep Critique" -> OpenRouter Claude 3.5 Sonnet).
 - [ ] **Build the Context Assembler:** Write a utility function that grabs the current Tiptap text content, grabs the active "Writing Objectives" and "Characters", and concatenates them into a single System Prompt string.
-- [ ] **Update Code and Browser tests to confirm Milestones 1, 2, 3, 4 and 5 are working **
+- [ ] **Update Code and Browser tests to confirm Milestones 5 is working **
 
-### Milestone 6: The AI Review Logic
-Wiring up the LLM.
-- [ ] **The Fetch Function:** Write a standard `fetch` call matching the OpenAI `/v1/chat/completions` schema.
-- [ ] **Trigger Mechanism:** Add "Run" buttons next to your Active Review Recipes. When clicked, it passes the Context Assembled string + the specific Recipe instruction to the LLM.
-- [ ] **Handle the Output:** Parse the streaming (or static) JSON response from the LLM and display the feedback cards in the `ReviewPanel.svelte` sidebar.
-- [ ] **Update Code and Browser tests to confirm Milestones 1, 2, 3, 4 and 5are working **
+### Milestone 6: The AI Review Logic (Async & Streaming)
+Wiring up the LLMs with real-time feedback.
+- [ ] **The Fetch Engine / Proxy:** Write an async fetch handler. **Note:** To avoid browser CORS issues with native OpenAI/Anthropic APIs, we will likely need a SvelteKit `+server.ts` pass-through route, or strictly rely on CORS-friendly endpoints like OpenRouter and Local LLMs.
+- [ ] **Unified API Adapters:** Build a generalized request handler that formats the request for OpenAI-compatible endpoints (OpenRouter, Ollama, vLLM, Gemini-compatibility-mode) and a separate formatter if native Anthropic endpoint is needed.
+- [ ] **Trigger Mechanism:** Add "Run" buttons next to your Active Review Recipes. When clicked, it passes the Context + specific Recipe to the chosen Model.
+- [ ] **Handle Streaming Output:** Process `ReadableStream` chunks so the AI feedback cards in the `ReviewPanel.svelte` sidebar type out in real-time.
+- [ ] **Update Code and Browser tests to confirm Milestone 6 is working **
 
 ### Milestone 7: The "Code Review" UX (Annotations)
 Connecting the AI's thoughts back to the specific words in the editor.
