@@ -90,7 +90,18 @@ npm run format
 - [x] **Context Management:** Build Svelte Stores for managing the "Context Board" (Characters, Story So Far, Writing Objectives).
 - [x] **AI Integration:** Implement the standard `/v1/chat/completions` API fetch logic (BYOK - Bring Your Own Key).
 - [x] **Review Logic:** Build the `ContextStore` prompt assembly (combining active recipes, context board, and scene text).
-- [ ] **Critique UI:** Integrate a selection-based annotation system (e.g., `tiptap-comment-extension`) to anchor AI feedback to specific paragraphs.
+- [x] **Critique UI:** Integrate a selection-based annotation system (e.g., `tiptap-comment-extension`) to anchor AI feedback to specific paragraphs.
+
+---
+
+## 🗺 Phase 2 Roadmap (Beta)
+
+- [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
+- [ ] **WebGPU / Local Browser AI:** Support downloading 4GB+ quantized models via WebLLM or Transformers.js for fully local offline AI generation.
+- [ ] **Complex Recipe Builder UI:** Create a node-based or slider-based UI for custom prompts.
+- [ ] **Full File System Access API Integration:** Export and sync to physical `.md` files on the user's hard drive.
+- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement an interactive conversational AI system.
+- [ ] **Beta Release:** Build and publish the application for public Beta Testing.
 
 ---
 *Developed for a distraction-free, privacy-first writing experience.*

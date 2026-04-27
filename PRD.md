@@ -54,11 +54,14 @@ The application will utilize an ultrawide-optimized 4-column layout, which grace
 * **Privacy:** The user's text must never leave their local machine unless they explicitly trigger an AI review, at which point it is sent only to the API endpoint they configured.
 
 ## 6. Phase 2 Requirements
+* **Enhanced Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
+* **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop.
+* **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
+* **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
 * **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
 * **WebGPU / Local Browser AI:** Support downloading 4GB+ quantized models via WebLLM or Transformers.js for fully local offline AI generation.
 * **Complex Recipe Builder UI:** Create a node-based or slider-based UI for custom prompts.
 * **Full File System Access API Integration:** Export and sync to physical `.md` files on the user's hard drive.
-* **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement an interactive conversational AI system.
 * **Beta Release:** Build and publish the application for public Beta Testing.
 
 ***

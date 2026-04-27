@@ -367,7 +367,7 @@
                                                                                 </button>
                                                                                 <button 
                                                                                         class="px-2 py-1 text-[10px] font-medium rounded-r-md border {recipe.outputFormat === 'todos' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-zinc-200 text-zinc-500 hover:bg-zinc-50'}"
-                                                                                        title="Automatically add items to Scene To-Dos"
+                                                                                        title="Automatically add items to Scene ToDos"
                                                                                         onclick={() => recipe.outputFormat = 'todos'}>
                                                                                         <Code size={12} class="inline mr-1" /> To-Dos
                                                                                 </button>
@@ -447,7 +447,7 @@
 
 		<div>
 			<div class="flex items-center justify-between mb-2">
-				<h3 class="text-sm font-semibold text-zinc-700">Scene To-Dos</h3>
+				<h3 class="text-sm font-semibold text-zinc-700">Scene ToDos</h3>
 				<span class="text-xs font-mono px-1.5 py-0.5 rounded {openTodos.length > 10 ? 'bg-red-200 text-red-800' : 'bg-zinc-200 text-zinc-600'}" title={openTodos.length > 10 ? 'Delete todos when you can to reduce token costs.' : ''}>
 					{openTodos.length}
 				</span>

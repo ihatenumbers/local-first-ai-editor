@@ -76,9 +76,12 @@ Connecting the AI's thoughts back to the specific words in the editor.
 ## Still ToDo
 
 ### Phase 2: Beta Features
+- [ ] **Enhanced Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
+- [ ] **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop.
+- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
+- [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
 - [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (e.g., using `prosemirror-multi-editor-diff` or Tiptap Snapshots).
 - [ ] **WebGPU / Local Browser AI:** Integrate WebLLM or Transformers.js to support fully local model execution.
 - [ ] **Complex Recipe Builder UI:** Build a graphical (node-based or slider-based) UI for constructing AI prompts and recipes.
-- [ ] **File System Access API:** Enable saving and loading physical `.md` files directly to and from the hard drive.
-- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
+- [ ] **File System Access API:** Enable saving and loading folders and physical `.md` files directly to and from the hard drive.
 - [ ] **Beta Release:** Configure build pipelines and publish the compiled application as a Beta Test.
