@@ -29,6 +29,39 @@
                 blockquote: false
         });
 
+        let tooltip = $state({
+                visible: false,
+                text: '',
+                x: 0,
+                y: 0
+        });
+
+        function handleMouseMove(e: MouseEvent) {
+                const target = e.target as HTMLElement;
+                const annotationSpan = target.closest('span[data-annotation-id]');
+                
+                if (annotationSpan) {
+                        const id = annotationSpan.getAttribute('data-annotation-id');
+                        const annotation = documentState.activeScene?.annotations?.find(a => a.id === id && !a.isIgnored);
+                        
+                        if (annotation) {
+                                tooltip = {
+                                        visible: true,
+                                        text: annotation.commentary || annotation.reasoning || annotation.suggestion || 'Annotation',
+                                        x: e.clientX,
+                                        y: e.clientY + 24
+                                };
+                                return;
+                        }
+                }
+                
+                tooltip.visible = false;
+        }
+
+        function handleMouseLeave() {
+                tooltip.visible = false;
+        }
+
         $effect(() => {
                 if (!element || !documentState.isLoaded || !documentState.activeSceneId) return;
 
@@ -146,5 +179,20 @@
 		</div>
 	{/if}
 
-	<div bind:this={element} class="w-full"></div>
+	<div 
+		bind:this={element} 
+		class="w-full" 
+		onmousemove={handleMouseMove} 
+		onmouseleave={handleMouseLeave}
+		role="presentation"
+	></div>
 </div>
+
+{#if tooltip.visible && tooltip.text}
+	<div 
+		class="fixed z-50 max-w-xs bg-white text-zinc-800 text-sm p-3 rounded shadow-xl border border-zinc-200 pointer-events-none font-medium"
+		style="left: {tooltip.x}px; top: {tooltip.y}px; transform: translate(-50%, 0);"
+	>
+		{tooltip.text}
+	</div>
+{/if}
