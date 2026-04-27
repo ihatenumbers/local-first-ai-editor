@@ -6,8 +6,9 @@ export interface Annotation {
         id: string;
         recipeId: string;
         originalText: string;
-        suggestion: string;
-        reasoning: string;
+        suggestion?: string; // Kept for backward compatibility
+        commentary: string; // Replaces reasoning/suggestion
+        reasoning?: string; // Kept for backward compatibility
         isIgnored?: boolean;
 }
 

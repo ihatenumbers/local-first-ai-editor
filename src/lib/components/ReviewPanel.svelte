@@ -129,7 +129,7 @@
                                 if (parsed && Array.isArray(parsed.response)) {
                                         let matchCount = 0;
                                         parsed.response.forEach((item: any) => {
-                                                if (item.original_text && item.suggestion && item.reasoning) {
+                                                if (item.original_text && (item.suggestion || item.commentary || item.reasoning)) {
                                                         // Attempt exact string match
                                                         const editor = uiState.editorInstance;
                                                         const text = editor.getText();
@@ -174,6 +174,7 @@
                                                                                 recipeId: recipe.id,
                                                                                 originalText: item.original_text,
                                                                                 suggestion: item.suggestion,
+                                                                                commentary: item.commentary || item.reasoning || item.suggestion || 'No comment provided',
                                                                                 reasoning: item.reasoning
                                                                         });
                                                                         matchCount++;
@@ -181,7 +182,7 @@
                                                         }
                                                 }
                                         });
-                                        recipe.feedback = `Analysis complete. Found and anchored ${matchCount} suggestions in the text.`;
+                                        recipe.feedback = `Analysis complete. Found and anchored ${matchCount} comments in the text.`;
                                 }
                         }
 
@@ -224,15 +225,32 @@
 		return { posFrom, posTo };
 	}
 
+	// Kept for backward compatibility, unused in new workflow
 	function resolveAnnotation(annotation: import("$lib/state/document.svelte").Annotation) {
 		if (!uiState.editorInstance || !documentState.activeScene) return;
 		const { posFrom, posTo } = findAnnotationPos(annotation.id);
 		
-		if (posFrom !== -1 && posTo !== -1) {
+		if (posFrom !== -1 && posTo !== -1 && annotation.suggestion) {
 			uiState.editorInstance.chain().focus().setTextSelection({ from: posFrom, to: posTo }).insertContent(annotation.suggestion).run();
 		}
 		
 		documentState.activeScene.annotations = (documentState.activeScene.annotations || []).filter(a => a.id !== annotation.id);
+	}
+
+	function addTodoFromAnnotation(annotation: import("$lib/state/document.svelte").Annotation) {
+		if (!documentState.activeScene) return;
+		
+		const todoText = `Address critique: "${annotation.commentary}" (Context: "${annotation.originalText}")`;
+		documentState.activeScene.todoList.push({
+			id: crypto.randomUUID(),
+			text: todoText,
+			status: 'open',
+			source: 'lint',
+			createdAt: Date.now()
+		});
+		
+		// Clear the annotation since it's now tracked as a To-Do
+		ignoreAnnotation(annotation);
 	}
 
 	function ignoreAnnotation(annotation: import("$lib/state/document.svelte").Annotation) {
@@ -388,15 +406,20 @@
                                                                                         <div class="p-3 border border-yellow-200 bg-yellow-50 rounded-md text-sm relative group shadow-sm transition-colors hover:border-yellow-400">
                                                                                                 <div class="font-bold text-yellow-800 text-xs mb-1 uppercase tracking-wide">Found Issue:</div>
                                                                                                 <div class="line-through text-zinc-400 mb-1.5 truncate text-xs font-mono">{annotation.originalText}</div>
-                                                                                                <div class="text-zinc-800 font-medium mb-1.5">{annotation.suggestion}</div>
-                                                                                                <div class="text-zinc-600 text-xs italic">{annotation.reasoning}</div>
+                                                                                                <div class="text-zinc-800 font-medium mb-1.5">{annotation.commentary}</div>
+                                                                                                {#if annotation.reasoning}
+                                                                                                        <div class="text-zinc-600 text-xs italic block mt-1">Reasoning: {annotation.reasoning}</div>
+                                                                                                {/if}
+                                                                                                {#if annotation.suggestion}
+                                                                                                        <div class="text-zinc-600 text-xs italic block mt-1">Suggestion: {annotation.suggestion}</div>
+                                                                                                {/if}
                                                                                                 
                                                                                                 <div class="mt-3 flex gap-2">
                                                                                                         <button 
                                                                                                                 class="flex-1 py-1 bg-indigo-500 hover:bg-indigo-600 text-white rounded text-xs font-medium transition-colors" 
-                                                                                                                onclick={() => resolveAnnotation(annotation)}
+                                                                                                                onclick={() => addTodoFromAnnotation(annotation)}
                                                                                                         >
-                                                                                                                Apply Fix
+                                                                                                                Add to To-Dos
                                                                                                         </button>
                                                                                                         <button 
                                                                                                                 class="flex-1 py-1 bg-white border border-zinc-200 hover:bg-zinc-50 text-zinc-600 rounded text-xs font-medium transition-colors" 

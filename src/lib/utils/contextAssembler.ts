@@ -21,9 +21,8 @@ export function buildSystemPrompt(scene: Scene, project: Project, recipe: Review
                 prompt += `CRITICAL: You must output YOUR ENTIRE RESPONSE as a valid JSON object containing a "response" array of objects. Each object must follow exactly this schema:
 { "response": [
   {
-    "original_text": "the exact snippet of text from the manuscript that needs changing",
-    "suggestion": "your rewritten or fixed text",
-    "reasoning": "brief explanation of why"
+    "original_text": "the exact snippet of text from the manuscript you are commenting on",
+    "commentary": "your review, critique, or advice for the author regarding this text"
   }
 ]
 }\n\n`;
