@@ -14,7 +14,8 @@
             type: 'openai',
             apiKey: '',
             baseUrl: 'https://api.openai.com/v1',
-            defaultModelId: ''
+            defaultModelId: 'gpt-4o-mini',
+            models: ['gpt-4o-mini', 'gpt-4o']
         });
     }
 
@@ -50,18 +51,28 @@
                         <span class="text-xs font-bold text-zinc-700 capitalize">{tier}</span>
                         <select 
                             bind:value={settingsState.tiers[tier].providerId}
+                            onchange={() => {
+                                const activeProfile = settingsState.profiles.find(p => p.id === settingsState.tiers[tier].providerId);
+                                if (activeProfile && activeProfile.models.length > 0) {
+                                    settingsState.tiers[tier].modelId = activeProfile.models[0];
+                                } else {
+                                    settingsState.tiers[tier].modelId = '';
+                                }
+                            }}
                             class="w-full text-xs p-1.5 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500 bg-white"
                         >
                             {#each settingsState.profiles as p}
                                 <option value={p.id}>{p.name}</option>
                             {/each}
                         </select>
-                        <input 
-                            type="text" 
+                        <select 
                             bind:value={settingsState.tiers[tier].modelId}
-                            placeholder="Model ID (e.g. gpt-4o)"
-                            class="w-full text-xs p-1.5 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500"
-                        />
+                            class="w-full text-xs p-1.5 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500 bg-white"
+                        >
+                            {#each (settingsState.profiles.find(p => p.id === settingsState.tiers[tier].providerId)?.models || []) as m}
+                                <option value={m}>{m}</option>
+                            {/each}
+                        </select>
                     </div>
                 {/each}
             </div>
@@ -106,6 +117,18 @@
                                 <option value="local">Local (Ollama/vLLM)</option>
                             </select>
                         </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1" for="models-{profile.id}">Supported Models (Comma Separated)</label>
+                        <input 
+                            id="models-{profile.id}"
+                            type="text" 
+                            value={profile.models.join(', ')}
+                            oninput={(e) => profile.models = e.currentTarget.value.split(',').map(m => m.trim()).filter(Boolean)}
+                            class="w-full text-sm p-2 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+                            placeholder="gpt-4o, gpt-3.5-turbo"
+                        />
                     </div>
 
                     <div class="mb-4">

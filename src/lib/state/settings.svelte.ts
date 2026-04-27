@@ -7,6 +7,7 @@ export interface ProviderProfile {
     apiKey: string;
     baseUrl: string;
     defaultModelId: string;
+    models: string[];
 }
 
 export class SettingsState {
@@ -17,7 +18,8 @@ export class SettingsState {
             type: 'openai',
             apiKey: '',
             baseUrl: 'https://api.openai.com/v1',
-            defaultModelId: 'gpt-4o-mini'
+            defaultModelId: 'gpt-4o-mini',
+            models: ['gpt-4o-mini', 'gpt-4o']
         },
         {
             id: 'default-openrouter',
@@ -25,7 +27,8 @@ export class SettingsState {
             type: 'openai',
             apiKey: '',
             baseUrl: 'https://openrouter.ai/api/v1',
-            defaultModelId: 'anthropic/claude-3-haiku'
+            defaultModelId: 'anthropic/claude-3-haiku',
+            models: ['anthropic/claude-3-haiku', 'anthropic/claude-3-opus', 'anthropic/claude-3.5-sonnet', 'meta-llama/llama-3-70b-instruct']
         },
         {
             id: 'default-ollama',
@@ -33,7 +36,8 @@ export class SettingsState {
             type: 'local',
             apiKey: 'ollama',
             baseUrl: 'http://localhost:11434/v1',
-            defaultModelId: 'llama3'
+            defaultModelId: 'llama3',
+            models: ['llama3', 'mistral', 'phi3']
         }
     ]);
 
@@ -49,7 +53,12 @@ export class SettingsState {
             if (storedProfiles) {
                 try {
                     const parsed = JSON.parse(storedProfiles);
-                    if (Array.isArray(parsed) && parsed.length > 0) this.profiles = parsed;
+                    if (Array.isArray(parsed) && parsed.length > 0) {
+                        this.profiles = parsed.map(p => ({
+                            ...p,
+                            models: p.models || (p.defaultModelId ? [p.defaultModelId] : [])
+                        }));
+                    }
                 } catch (e) {
                     console.error("Failed to load profiles", e);
                 }
