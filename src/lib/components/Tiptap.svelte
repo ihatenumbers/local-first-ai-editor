@@ -7,6 +7,10 @@
 	import Highlight from '@tiptap/extension-highlight';
 	import TaskItem from '@tiptap/extension-task-item';
 	import TaskList from '@tiptap/extension-task-list';
+	import { Table } from '@tiptap/extension-table';
+	import { TableRow } from '@tiptap/extension-table-row';
+	import { TableCell } from '@tiptap/extension-table-cell';
+	import { TableHeader } from '@tiptap/extension-table-header';
 	import { AnnotationMark } from './TiptapAnnotation';
 	import { documentState } from '$lib/state/document.svelte';
 	import { uiState } from '$lib/state/ui.svelte';
@@ -27,7 +31,8 @@
 		AlignLeft,
 		AlignCenter,
 		AlignRight,
-		AlignJustify
+		AlignJustify,
+		Table as TableIcon
 	} from 'lucide-svelte';
 
 	let element: HTMLElement;
@@ -48,7 +53,8 @@
 		alignLeft: false,
 		alignCenter: false,
 		alignRight: false,
-		alignJustify: false
+		alignJustify: false,
+		table: false
 	});
 
 	let tooltip = $state({
@@ -104,6 +110,12 @@
 				TextAlign.configure({
 					types: ['heading', 'paragraph']
 				}),
+				Table.configure({
+					resizable: true
+				}),
+				TableRow,
+				TableHeader,
+				TableCell,
 				Collaboration.configure({
 					document: documentState.ydoc,
 					field: 'scene-' + documentState.activeSceneId
@@ -130,6 +142,7 @@
 				active.alignCenter = e.isActive({ textAlign: 'center' });
 				active.alignRight = e.isActive({ textAlign: 'right' });
 				active.alignJustify = e.isActive({ textAlign: 'justify' });
+				active.table = e.isActive('table');
 			},
 			onUpdate: ({ editor: e }) => {
 				if (documentState.activeScene) {
@@ -326,6 +339,63 @@
 			>
 				<Quote size={18} />
 			</button>
+
+			<div class="mx-1 h-4 w-px bg-zinc-200"></div>
+
+			<!-- Tables -->
+			<button
+				class="rounded p-1.5 transition-colors {active.table
+					? 'bg-zinc-200 text-zinc-900 shadow-inner'
+					: 'text-zinc-500 hover:bg-zinc-100 hover:text-zinc-900'}"
+				onclick={() =>
+					editor?.chain().focus().insertTable({ rows: 3, cols: 3, withHeaderRow: true }).run()}
+				title="Insert Table"
+			>
+				<TableIcon size={18} />
+			</button>
+			{#if active.table}
+				<div
+					class="flex items-center space-x-1 rounded border border-zinc-200 px-1 text-xs font-semibold text-zinc-500"
+				>
+					<button
+						class="rounded px-1 py-1 hover:bg-zinc-100 hover:text-zinc-900"
+						onclick={() => editor?.chain().focus().addColumnBefore().run()}
+						title="Add Column Before">+Col Left</button
+					>
+					<button
+						class="rounded px-1 py-1 hover:bg-zinc-100 hover:text-zinc-900"
+						onclick={() => editor?.chain().focus().addColumnAfter().run()}
+						title="Add Column After">+Col Right</button
+					>
+					<button
+						class="rounded px-1 py-1 text-red-600 hover:bg-zinc-100 hover:text-zinc-900"
+						onclick={() => editor?.chain().focus().deleteColumn().run()}
+						title="Delete Column">-Col</button
+					>
+					<div class="mx-1 h-3 w-px bg-zinc-200"></div>
+					<button
+						class="rounded px-1 py-1 hover:bg-zinc-100 hover:text-zinc-900"
+						onclick={() => editor?.chain().focus().addRowBefore().run()}
+						title="Add Row Before">+Row Up</button
+					>
+					<button
+						class="rounded px-1 py-1 hover:bg-zinc-100 hover:text-zinc-900"
+						onclick={() => editor?.chain().focus().addRowAfter().run()}
+						title="Add Row After">+Row Down</button
+					>
+					<button
+						class="rounded px-1 py-1 text-red-600 hover:bg-zinc-100 hover:text-zinc-900"
+						onclick={() => editor?.chain().focus().deleteRow().run()}
+						title="Delete Row">-Row</button
+					>
+					<div class="mx-1 h-3 w-px bg-zinc-200"></div>
+					<button
+						class="rounded px-1 py-1 text-red-600 hover:bg-red-50 hover:text-red-700"
+						onclick={() => editor?.chain().focus().deleteTable().run()}
+						title="Delete Table">Delete Table</button
+					>
+				</div>
+			{/if}
 		</div>
 	{/if}
 

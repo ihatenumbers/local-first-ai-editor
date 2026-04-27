@@ -95,7 +95,7 @@ Connecting the AI's thoughts back to the specific words in the editor.
 
 ### Phase 2: Beta Features
 
-- [ ] **Enhance Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
+- [x] **Enhance Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
 - [ ] **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop.
 - [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
 - [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
