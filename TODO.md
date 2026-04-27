@@ -1,6 +1,6 @@
-Here is a sensible, sequential development roadmap. Since we are using Svelte 5, we will leverage modern `*.svelte.ts` files for our global state instead of the older Svelte 4 stores.
+# ToDo Project Tracker
 
-I have broken this down into logical milestones so you can tackle them one by one in VS Code without getting overwhelmed.
+## Done Items
 
 ### Milestone 1: Global State Management (The Brains)
 Before extracting components, we need a central place to hold the data so the panels can talk to each other and the editor.
@@ -73,6 +73,12 @@ Connecting the AI's thoughts back to the specific words in the editor.
 
 ***
 
-**Where to start today:** I recommend tackling **Milestone 1 and 2** first. Getting your folders structured, your Svelte 5 state runes set up, and your UI extracted into neat components will make adding Tiptap and Yjs drastically easier. 
+## Still ToDo
 
-Let me know when you've got the folders set up or if you want the boilerplate code for the `ui.svelte.ts` state file!
+### Phase 2: Beta Features
+- [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (e.g., using `prosemirror-multi-editor-diff` or Tiptap Snapshots).
+- [ ] **WebGPU / Local Browser AI:** Integrate WebLLM or Transformers.js to support fully local model execution.
+- [ ] **Complex Recipe Builder UI:** Build a graphical (node-based or slider-based) UI for constructing AI prompts and recipes.
+- [ ] **File System Access API:** Enable saving and loading physical `.md` files directly to and from the hard drive.
+- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
+- [ ] **Beta Release:** Configure build pipelines and publish the compiled application as a Beta Test.
