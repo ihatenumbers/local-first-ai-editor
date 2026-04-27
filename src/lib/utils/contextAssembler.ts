@@ -49,6 +49,14 @@ export function buildSystemPrompt(scene: Scene, project: Project, recipe: Review
                 });
         }
 
+        if (scene.todoList && scene.todoList.length > 0) {
+                prompt += `### CURRENT TO-DOS\n(Do not suggest these again, as they are already tracked)\n`;
+                scene.todoList.forEach(todo => {
+                        prompt += `[${todo.status.toUpperCase()}] ${todo.text}\n`;
+                });
+                prompt += `\n`;
+        }
+
         prompt += `### THE MANUSCRIPT SCENE DRAFT\n(Please execute your INSTRUCTIONS strictly on the manuscript provided below)\n`;
 
         return prompt;

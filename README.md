@@ -1,6 +1,6 @@
-# Offline AI Writer & Semantic Reviewer
+# Local First AI Reviewer
 
-An AI powered, browser-native, privacy-first writing application. This platform shifts AI usage from "write this for me and lose my voice in the process" to "help me review and improve my writing" acting as a semantic linter for your prose. 
+An AI powered, browser-native, privacy-first writing application. This platform shifts AI usage from "write this for me and lose my voice in the process" to "help me review and improve my writing". It acts as a semantic linter for your prose, with in document commentary, a todo list, plus chapter and scene navigation. 
 
 It operates entirely client-side without a backend runtime server. It utilizes local browser storage (IndexedDB) for secure, offline-first saving, and standard AI API endpoints to provide context-aware critiques without altering your base manuscript unless explicitly approved.
 
@@ -89,7 +89,7 @@ npm run format
 - [x] **Persistence:** Integrate Yjs with `y-indexeddb` to ensure document state survives page reloads natively.
 - [x] **Context Management:** Build Svelte Stores for managing the "Context Board" (Characters, Story So Far, Writing Objectives).
 - [x] **AI Integration:** Implement the standard `/v1/chat/completions` API fetch logic (BYOK - Bring Your Own Key).
-- [ ] **Review Logic:** Build the `ContextStore` prompt assembly (combining active recipes, context board, and scene text).
+- [x] **Review Logic:** Build the `ContextStore` prompt assembly (combining active recipes, context board, and scene text).
 - [ ] **Critique UI:** Integrate a selection-based annotation system (e.g., `tiptap-comment-extension`) to anchor AI feedback to specific paragraphs.
 
 ---

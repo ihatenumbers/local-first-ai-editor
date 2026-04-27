@@ -28,6 +28,14 @@ export interface ContextItem {
         content: string;
 }
 
+export interface TodoItem {
+        id: string;
+        text: string;
+        status: 'open' | 'completed' | 'ignored';
+        source: 'user' | 'recipe' | 'lint';
+        createdAt: number;
+}
+
 export interface Scene {
         id: string;
         chapterNumber: number;
@@ -35,7 +43,7 @@ export interface Scene {
         title: string;
         content: string;
         objectivesText: string;
-        todoList: string[];
+        todoList: TodoItem[];
         reviewRecipes: ReviewRecipe[];
         contextItems: ContextItem[];
         annotations: Annotation[];

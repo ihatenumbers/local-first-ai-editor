@@ -17,9 +17,10 @@ describe('DocumentState', () => {
     it('can update values', () => {
         const doc = new DocumentState();
         doc.activeScene!.wordCount = 100;
-        doc.activeScene!.todoList.push('New task');
+        const task = { id: '1', text: 'New task', status: 'open' as const, source: 'user' as const, createdAt: 12345 };
+        doc.activeScene!.todoList.push(task);
         
         expect(doc.activeScene?.wordCount).toBe(100);
-        expect(doc.activeScene?.todoList).toEqual(['New task']);
+        expect(doc.activeScene?.todoList).toEqual([task]);
     });
 });

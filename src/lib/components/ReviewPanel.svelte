@@ -9,6 +9,32 @@
         let isResizing = $state(false);
         let expandedRecipes = $state<Record<string, boolean>>({});
 
+        const openTodos = $derived((documentState.activeScene?.todoList || []).filter(t => t && typeof t === 'object' && (t.status === 'open' || t.status === 'ignored')));
+
+        // Migrate string-based todos to structured TodoItems for backward compatibility
+        $effect(() => {
+                if (documentState.activeScene && documentState.activeScene.todoList?.length > 0) {
+                        let hasOldTodos = false;
+                        const migrated = documentState.activeScene.todoList.map(t => {
+                                if (typeof t === 'string') {
+                                        hasOldTodos = true;
+                                        return {
+                                                id: crypto.randomUUID(),
+                                                text: t,
+                                                status: 'open' as const,
+                                                source: 'user' as const,
+                                                createdAt: Date.now()
+                                        };
+                                }
+                                return t;
+                        });
+                        
+                        if (hasOldTodos) {
+                                documentState.activeScene.todoList = migrated;
+                        }
+                }
+        });
+
         async function runRecipe(recipe: ReviewRecipe) {
                 if (!documentState.activeScene) return;
 
@@ -82,11 +108,18 @@
                         if (recipe.outputFormat === 'todos') {
                                 const parsed = extractJsonFromText(recipe.feedback);
                                 if (parsed && Array.isArray(parsed.response)) {
-                                        const strings = parsed.response.filter((p: any) => typeof p === 'string');
+                                        const strings: string[] = parsed.response.filter((p: any) => typeof p === 'string');
                                         if (strings.length > 0) {
+                                                const newTodos = strings.map(s => ({
+                                                        id: crypto.randomUUID(),
+                                                        text: s,
+                                                        status: 'open' as const,
+                                                        source: 'recipe' as const,
+                                                        createdAt: Date.now()
+                                                }));
                                                 documentState.activeScene.todoList = [
                                                         ...documentState.activeScene.todoList,
-                                                        ...strings
+                                                        ...newTodos
                                                 ];
                                                 recipe.feedback = `Successfully added ${strings.length} To-Dos!`;
                                         }
@@ -392,9 +425,68 @@
 		<div>
 			<div class="flex items-center justify-between mb-2">
 				<h3 class="text-sm font-semibold text-zinc-700">Scene To-Dos</h3>
-				<span class="text-xs font-mono bg-zinc-200 px-1.5 py-0.5 rounded text-zinc-600">{documentState.activeScene?.todoList.length || 0}</span>
+				<span class="text-xs font-mono px-1.5 py-0.5 rounded {openTodos.length > 10 ? 'bg-red-200 text-red-800' : 'bg-zinc-200 text-zinc-600'}" title={openTodos.length > 10 ? 'Delete todos when you can to reduce token costs.' : ''}>
+					{openTodos.length}
+				</span>
 			</div>
-			<textarea value={documentState.activeScene?.todoList.map(t => `- ${t}`).join("\n") || ""} oninput={(e) => { if (documentState.activeScene) { documentState.activeScene.todoList = e.currentTarget.value.split("\n").map(t => t.replace(/^- /, "")).filter(t => t.trim() !== ""); } }} class="w-full rounded-md border-zinc-300 shadow-sm text-sm p-2 bg-white resize-none h-48 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="- Foreshadow the amulet&#10;- Describe the lighting&#10;- Fix dialogue pacing in middle"></textarea>
+
+			<div class="h-64 overflow-y-auto bg-white border border-zinc-300 rounded-md shadow-sm mb-2 p-2">
+				{#each (documentState.activeScene?.todoList || []) as todo, i (typeof todo === 'object' && todo && 'id' in todo ? todo.id : i)}
+					{#if typeof todo !== 'string'}
+						<div class="flex items-start gap-2 p-1.5 mb-1 group rounded hover:bg-zinc-50 {todo.status === 'ignored' ? 'opacity-50 line-through' : ''}">
+							<input type="checkbox" checked={todo.status === 'completed'} class="mt-1 flex-shrink-0 cursor-pointer rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500 h-4 w-4" onchange={(e) => {
+								if (documentState.activeScene) {
+									const idx = documentState.activeScene.todoList.findIndex(t => t.id === todo.id);
+									if (idx !== -1) {
+										documentState.activeScene.todoList[idx].status = e.currentTarget.checked ? 'completed' : 'open';
+									}
+								}
+							}} />
+							<div class="flex-1 text-sm text-zinc-800 break-words">
+								<span class="inline-block mr-1 text-xs" title="Source: {todo.source}">{todo.source === 'user' ? '👤' : (todo.source === 'recipe' ? '🤖' : '🔍')}</span>
+								<span class={todo.status === 'completed' ? 'text-zinc-500 line-through' : ''}>{todo.text}</span>
+							</div>
+							<div class="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity flex gap-1">
+								{#if todo.status !== 'completed'}
+									<button class="text-zinc-400 hover:text-orange-500" title={todo.status === 'ignored' ? 'Unignore' : 'Ignore'} onclick={() => {
+										if (documentState.activeScene) {
+											const idx = documentState.activeScene.todoList.findIndex(t => t.id === todo.id);
+											if (idx !== -1) {
+												documentState.activeScene.todoList[idx].status = todo.status === 'ignored' ? 'open' : 'ignored';
+											}
+										}
+									}}>
+										<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
+									</button>
+								{/if}
+								<button class="text-zinc-400 hover:text-red-500" title="Delete" onclick={() => {
+									if (documentState.activeScene) {
+										documentState.activeScene.todoList = documentState.activeScene.todoList.filter(t => t.id !== todo.id);
+									}
+								}}>
+									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
+								</button>
+							</div>
+						</div>
+					{/if}
+				{/each}
+				{#if (documentState.activeScene?.todoList || []).length === 0}
+					<div class="text-center p-4 text-zinc-500 text-sm">No To-Dos yet.</div>
+				{/if}
+			</div>
+
+			<input type="text" class="w-full text-sm p-2 border border-zinc-300 rounded bg-white shadow-sm focus:ring-1 focus:ring-indigo-500 focus:outline-none placeholder:text-zinc-400" placeholder="Add a scene to-do..." onkeydown={(e) => {
+				if (e.key === 'Enter' && e.currentTarget.value.trim() && documentState.activeScene) {
+					documentState.activeScene.todoList.push({
+						id: crypto.randomUUID(),
+						text: e.currentTarget.value.trim(),
+						status: 'open',
+						source: 'user',
+						createdAt: Date.now()
+					});
+					e.currentTarget.value = '';
+				}
+			}} />
 		</div>
 
 	</div>
