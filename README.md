@@ -1,4 +1,4 @@
-# Local First AI Reviewer
+# Local First Editor with AIReviewer
 
 An AI powered, browser-native, privacy-first writing application. This platform shifts AI usage from "write this for me and lose my voice in the process" to "help me review and improve my writing". It acts as a semantic linter for your prose, with in document commentary, a todo list, plus chapter and scene navigation. 
 

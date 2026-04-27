@@ -69,7 +69,7 @@ Connecting the AI's thoughts back to the specific words in the editor.
 - [x] **Implement Comments:** Add a custom Tiptap mark (or use an open-source comment extension) to allow wrapping text ranges in highlighted backgrounds.
 - [x] **Anchor AI Feedback:** When the JSON is successfully parsed, write logic that searches the Tiptap document for the exact `original_text` and wraps it in a comment mark tied to a unique ID.
 - [x] **Resolve/Ignore:** Add buttons to the AI feedback cards in the sidebar to remove the highlight from the text (Ignore) or trigger a diff/replacement (Resolve).
-- [ ] **Update Code and Browser tests to confirm Milestones 7 is working **
+- [x] **Update Code and Browser tests to confirm Milestones 7 is working **
 
 ***
 
