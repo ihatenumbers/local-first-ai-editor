@@ -3,7 +3,9 @@
         import StarterKit from '@tiptap/starter-kit';
         import CharacterCount from '@tiptap/extension-character-count';
         import Collaboration from '@tiptap/extension-collaboration';
+        import { AnnotationMark } from './TiptapAnnotation';
         import { documentState } from '$lib/state/document.svelte';
+        import { uiState } from '$lib/state/ui.svelte';
         import { 
                 Bold, 
                 Italic, 
@@ -34,6 +36,7 @@
                         element: element,
                         extensions: [
                                 StarterKit,
+                                AnnotationMark,
                                 CharacterCount,
                                 Collaboration.configure({
                                         document: documentState.ydoc,
@@ -67,8 +70,12 @@
                 }
 
                 editor = newEditor;
+                uiState.editorInstance = newEditor;
 
                 return () => {
+                        if (uiState.editorInstance === newEditor) {
+                                uiState.editorInstance = null;
+                        }
                         newEditor.destroy();
                 };
         });

@@ -232,7 +232,7 @@
 				<h3 class="text-sm font-semibold text-zinc-700">Scene To-Dos</h3>
 				<span class="text-xs font-mono bg-zinc-200 px-1.5 py-0.5 rounded text-zinc-600">{documentState.activeScene?.todoList.length || 0}</span>
 			</div>
-			<textarea class="w-full rounded-md border-zinc-300 shadow-sm text-sm p-2 bg-white resize-none h-48 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="- Foreshadow the amulet&#10;- Describe the lighting&#10;- Fix dialogue pacing in middle"></textarea>
+			<textarea value={documentState.activeScene?.todoList.map(t => `- ${t}`).join("\n") || ""} oninput={(e) => { if (documentState.activeScene) { documentState.activeScene.todoList = e.currentTarget.value.split("\n").map(t => t.replace(/^- /, "")).filter(t => t.trim() !== ""); } }} class="w-full rounded-md border-zinc-300 shadow-sm text-sm p-2 bg-white resize-none h-48 focus:ring-1 focus:ring-indigo-500 focus:outline-none" placeholder="- Foreshadow the amulet&#10;- Describe the lighting&#10;- Fix dialogue pacing in middle"></textarea>
 		</div>
 
 	</div>

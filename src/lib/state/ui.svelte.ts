@@ -5,6 +5,8 @@ export class UIState {
         showSettings = $state(false);
         
         reviewPanelWidth = $state(320);
-        contextPanelWidth = $state(320);}
-
+        contextPanelWidth = $state(320);
+        
+        editorInstance: any = null;
+}
 export const uiState = new UIState();
