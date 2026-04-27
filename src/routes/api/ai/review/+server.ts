@@ -34,7 +34,7 @@ export async function POST({ request, fetch }: RequestEvent) {
 
             // Only OpenAI API currently supports response_format strictly in all models,
             // but we'll include it if requested and let local endpoints ignore or use it.
-            if (responseFormat === 'json') {
+            if (responseFormat === 'lints' || responseFormat === 'todos') {
                 upstreamBody.response_format = { type: 'json_object' };
             }
 

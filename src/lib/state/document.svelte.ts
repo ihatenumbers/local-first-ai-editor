@@ -2,13 +2,22 @@ import { browser } from '$app/environment';
 import * as Y from 'yjs';
 import { IndexeddbPersistence } from 'y-indexeddb';
 
+export interface Annotation {
+        id: string;
+        recipeId: string;
+        originalText: string;
+        suggestion: string;
+        reasoning: string;
+        isIgnored?: boolean;
+}
+
 export interface ReviewRecipe {
         id: string;
         title: string;
         prompt: string;
         isActive: boolean;
         tier: 'fast' | 'balanced' | 'deep';
-        outputFormat: 'text' | 'json';
+        outputFormat: 'text' | 'lints' | 'todos';
         feedback?: string;
         isGenerating?: boolean;
 }
@@ -29,6 +38,7 @@ export interface Scene {
         todoList: string[];
         reviewRecipes: ReviewRecipe[];
         contextItems: ContextItem[];
+        annotations: Annotation[];
         wordCount: number;
 }
 
@@ -55,6 +65,7 @@ export class DocumentState {
                                 todoList: [],
                                 reviewRecipes: [],
                                 contextItems: [],
+                                annotations: [],
                                 wordCount: 0
                         }
                 ]

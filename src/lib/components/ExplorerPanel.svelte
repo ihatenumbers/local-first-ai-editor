@@ -219,7 +219,8 @@ objectivesText: '',
 todoList: [],
 reviewRecipes: recipes,
 contextItems: context,
-wordCount: 0
+annotations: [],
+                        wordCount: 0
 });
 
 documentState.activeSceneId = id;
@@ -244,7 +245,8 @@ objectivesText: '',
 todoList: [],
 reviewRecipes: recipes,
 contextItems: context,
-wordCount: 0
+annotations: [],
+                        wordCount: 0
 });
 
 documentState.activeSceneId = id;

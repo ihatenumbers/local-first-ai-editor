@@ -174,13 +174,19 @@
                                                                                         class="px-2 py-1 text-[10px] font-medium rounded-l-md border border-r-0 {recipe.outputFormat === 'text' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-zinc-200 text-zinc-500 hover:bg-zinc-50'}" 
                                                                                         title="Free-text feedback in sidebar"
                                                                                         onclick={() => recipe.outputFormat = 'text'}>
-                                                                                        <MessageSquare size={12} class="inline mr-1" /> Sidebar
+                                                                                        <MessageSquare size={12} class="inline mr-1" /> Text
                                                                                 </button>
                                                                                 <button 
-                                                                                        class="px-2 py-1 text-[10px] font-medium rounded-r-md border {recipe.outputFormat === 'json' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-zinc-200 text-zinc-500 hover:bg-zinc-50'}"
+                                                                                        class="px-2 py-1 text-[10px] font-medium border-t border-b border-l {recipe.outputFormat === 'lints' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-zinc-200 text-zinc-500 hover:bg-zinc-50'}"
                                                                                         title="JSON object output for editor anchors"
-                                                                                        onclick={() => recipe.outputFormat = 'json'}>
-                                                                                        <Code size={12} class="inline mr-1" /> Inline
+                                                                                        onclick={() => recipe.outputFormat = 'lints'}>
+                                                                                        <Code size={12} class="inline mr-1" /> Lints
+                                                                                </button>
+                                                                                <button 
+                                                                                        class="px-2 py-1 text-[10px] font-medium rounded-r-md border {recipe.outputFormat === 'todos' ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-white border-zinc-200 text-zinc-500 hover:bg-zinc-50'}"
+                                                                                        title="Automatically add items to Scene To-Dos"
+                                                                                        onclick={() => recipe.outputFormat = 'todos'}>
+                                                                                        <Code size={12} class="inline mr-1" /> To-Dos
                                                                                 </button>
                                                                         </div>
                                                                         <select bind:value={recipe.tier} class="text-[10px] font-medium bg-zinc-50 border border-zinc-200 rounded p-1 text-zinc-600 focus:ring-indigo-500 outline-none">
