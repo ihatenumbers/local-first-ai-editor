@@ -9,6 +9,8 @@ export interface ReviewRecipe {
         isActive: boolean;
         tier: 'fast' | 'balanced' | 'deep';
         outputFormat: 'text' | 'json';
+        feedback?: string;
+        isGenerating?: boolean;
 }
 
 export interface ContextItem {

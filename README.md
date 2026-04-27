@@ -15,7 +15,7 @@ It operates entirely client-side without a backend runtime server. It utilizes l
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Getting Started (Development)
 
 ### Prerequisites
 * Node.js (v18 or higher recommended)
@@ -84,10 +84,10 @@ npm run format
 
 - [x] Scaffold SvelteKit project with TypeScript, Tailwind, and testing suites.
 - [x] Install core dependencies (Tiptap, Yjs, Lucide).
-- [ ] **Layout:** Build the responsive, ultrawide 4-column UI shell.
-- [ ] **Editor:** Implement the base `Tiptap.svelte` component with standard Markdown shortcuts.
-- [ ] **Persistence:** Integrate Yjs with `y-indexeddb` to ensure document state survives page reloads natively.
-- [ ] **Context Management:** Build Svelte Stores for managing the "Context Board" (Characters, Story So Far, Writing Objectives).
+- [x] **Layout:** Build the responsive, ultrawide 4-column UI shell.
+- [x] **Editor:** Implement the base `Tiptap.svelte` component with standard Markdown shortcuts.
+- [x] **Persistence:** Integrate Yjs with `y-indexeddb` to ensure document state survives page reloads natively.
+- [x] **Context Management:** Build Svelte Stores for managing the "Context Board" (Characters, Story So Far, Writing Objectives).
 - [ ] **AI Integration:** Implement the standard `/v1/chat/completions` API fetch logic (BYOK - Bring Your Own Key).
 - [ ] **Review Logic:** Build the `ContextStore` prompt assembly (combining active recipes, context board, and scene text).
 - [ ] **Critique UI:** Integrate a selection-based annotation system (e.g., `tiptap-comment-extension`) to anchor AI feedback to specific paragraphs.

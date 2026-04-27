@@ -1,11 +1,72 @@
 <script lang="ts">
-	import { documentState } from '$lib/state/document.svelte';
-	import { uiState } from '$lib/state/ui.svelte';
-	import { Plus, Trash2, ChevronDown, ChevronRight, MessageSquare, Code } from 'lucide-svelte';
+        import { documentState, type ReviewRecipe } from '$lib/state/document.svelte';
+        import { settingsState } from '$lib/state/settings.svelte';
+        import { uiState } from '$lib/state/ui.svelte';
+        import { buildSystemPrompt, buildUserMessage } from '$lib/utils/contextAssembler';
+        import { Plus, Trash2, ChevronDown, ChevronRight, MessageSquare, Code, Play } from 'lucide-svelte';
 
-	let isResizing = $state(false);
+        let isResizing = $state(false);
         let expandedRecipes = $state<Record<string, boolean>>({});
 
+        async function runRecipe(recipe: ReviewRecipe) {
+                if (!documentState.activeScene) return;
+
+                const tierConfig = settingsState.tiers[recipe.tier];
+                if (!tierConfig || !tierConfig.modelId) {
+                        alert(`No model configured for tier: ${recipe.tier}`);
+                        return;
+                }
+
+                const profile = settingsState.profiles.find(p => p.id === tierConfig.providerId);
+                if (!profile) {
+                        alert('Provider profile not found.');
+                        return;
+                }
+
+                recipe.isGenerating = true;
+                recipe.feedback = '';
+                expandedRecipes[recipe.id] = true;
+
+                const systemPrompt = buildSystemPrompt(documentState.activeScene, documentState.project, recipe);
+                const userPrompt = buildUserMessage(documentState.activeScene);
+
+                try {
+                        const res = await fetch('/api/ai/review', {
+                                method: 'POST',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                        baseUrl: profile.baseUrl,
+                                        apiKey: profile.apiKey,
+                                        providerType: profile.type,
+                                        model: tierConfig.modelId,
+                                        systemPrompt,
+                                        userPrompt,
+                                        responseFormat: recipe.outputFormat
+                                })
+                        });
+
+                        if (!res.ok) {
+                                const err = await res.json();
+                                recipe.feedback = `Error: ${err.error || res.statusText}\n${err.details || ''}`;
+                                recipe.isGenerating = false;
+                                return;
+                        }
+
+                        const reader = res.body?.getReader();
+                        if (!reader) throw new Error('No stream to read');
+                        const decoder = new TextDecoder();
+
+                        while (true) {
+                                const { done, value } = await reader.read();
+                                if (done) break;
+                                recipe.feedback += decoder.decode(value, { stream: true });
+                        }
+                } catch (e: any) {
+                        recipe.feedback = `Error: ${e.message}`;
+                } finally {
+                        recipe.isGenerating = false;
+                }
+        }
 	function onPointerDown(e: PointerEvent) {
 		isResizing = true;
 		(e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -86,13 +147,23 @@
                                                                         placeholder="Recipe Title"
                                                                 />
                                                         </div>
-                                                        <button 
-                                                                class="text-zinc-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
-                                                                title="Delete Recipe"
-                                                                onclick={() => deleteRecipe(recipe.id)}
-                                                        >
-                                                                <Trash2 size={14} />
-                                                        </button>
+                                                        <div class="flex items-center gap-1">
+                                                                <button 
+                                                                        class="p-1 text-zinc-400 hover:text-indigo-600 transition-colors disabled:opacity-50 {recipe.isGenerating ? 'animate-pulse text-indigo-600' : ''}"
+                                                                        title={recipe.isGenerating ? "Analyzing..." : "Run Analysis"}
+                                                                        onclick={() => runRecipe(recipe)}
+                                                                        disabled={recipe.isGenerating}
+                                                                >
+                                                                        <Play size={14} class={recipe.isGenerating ? "fill-indigo-600" : ""} />
+                                                                </button>
+                                                                <button 
+                                                                        class="p-1 text-zinc-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                                                                        title="Delete Recipe"
+                                                                        onclick={() => deleteRecipe(recipe.id)}
+                                                                >
+                                                                        <Trash2 size={14} />
+                                                                </button>
+                                                        </div>
                                                 </div>
                                                 
                                                 {#if expandedRecipes[recipe.id]}
@@ -124,6 +195,19 @@
                                                                         class="w-full rounded-md border-zinc-200 text-sm p-2 bg-zinc-50 font-mono resize-none h-24 focus:ring-1 focus:ring-indigo-500 focus:outline-none placeholder:text-zinc-400" 
                                                                         placeholder="Enter AI instruction prompt..."
                                                                 ></textarea>
+
+                                                                {#if recipe.feedback || recipe.isGenerating}
+                                                                        <div class="mt-3 p-3 bg-indigo-50/50 border border-indigo-100 rounded-md text-sm text-zinc-700 whitespace-pre-wrap font-sans relative">
+                                                                                {#if recipe.isGenerating && !recipe.feedback}
+                                                                                        <span class="animate-pulse text-indigo-400">Thinking...</span>
+                                                                                {:else}
+                                                                                        {recipe.feedback}
+                                                                                        {#if recipe.isGenerating}
+                                                                                                <span class="inline-block w-1.5 h-3 bg-indigo-500 ml-1 animate-pulse"></span>
+                                                                                        {/if}
+                                                                                {/if}
+                                                                        </div>
+                                                                {/if}
                                                         </div>
                                                 {/if}
                                         </div>
