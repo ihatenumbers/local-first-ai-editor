@@ -43,7 +43,7 @@ describe('contextAssembler', () => {
 			'### BACKGROUND CONTEXT (CHARACTERS / LOCATIONS / LORE)\n**Character**\nJohn is brave'
 		);
 		expect(prompt).toContain(
-			'### CURRENT TO-DOS\n(Do not suggest these again, as they are already tracked)\n[OPEN] Fix first paragraph'
+			'### CURRENT TODOS\n(Do not suggest these again, as they are already tracked)\n[OPEN] Fix first paragraph'
 		);
 	});
 

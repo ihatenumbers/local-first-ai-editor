@@ -16,7 +16,7 @@ Let's break that massive `+page.svelte` file into modular, manageable pieces ins
 
 - [x] **Create `Header.svelte`:** Extract the sticky top toolbar (dashboard, save/load, toggle icons) plus add an extra toggle for ReviewPanel just to the left of the button for ContextPanel.
 - [x] **Create `ExplorerPanel.svelte`:** Extract the far-left file tree UI.
-- [x] **Create `ReviewPanel.svelte`:** Extract the inner-right panel (Active Recipes & To-Dos).
+- [x] **Create `ReviewPanel.svelte`:** Extract the inner-right panel (Active Recipes & ToDos).
 - [x] **Create `ContextPanel.svelte`:** Extract the far-right panel (Writing Objectives, Characters, Locations).
 - [x] **Update `+page.svelte`:** Import these new components so your main layout file is clean and just handles the Flexbox structure.
 - [x] **Update Code and Browser tests to confirm Milestones 1 and 2 are working **
@@ -83,7 +83,7 @@ Wiring up the LLMs with real-time feedback and robust parsing.
 
 Connecting the AI's thoughts back to the specific words in the editor.
 
-- [x] **Exact String Matching Strategy:** Instruct the LLM in JSON-mode recipes to always return `{ "original_text": "...", "suggestion": "...", "reasoning": "..." }` for lints, or flat strings for to-dos.
+- [x] **Exact String Matching Strategy:** Instruct the LLM in JSON-mode recipes to always return `{ "original_text": "...", "suggestion": "...", "reasoning": "..." }` for lints, or flat strings for todos.
 - [x] **Implement Comments:** Add a custom Tiptap mark (or use an open-source comment extension) to allow wrapping text ranges in highlighted backgrounds.
 - [x] **Anchor AI Feedback:** When the JSON is successfully parsed, write logic that searches the Tiptap document for the exact `original_text` and wraps it in a comment mark tied to a unique ID.
 - [x] **Resolve/Ignore:** Add buttons to the AI feedback cards in the sidebar to remove the highlight from the text (Ignore) or trigger a diff/replacement (Resolve).
@@ -96,7 +96,7 @@ Connecting the AI's thoughts back to the specific words in the editor.
 ### Phase 2: Beta Features
 
 - [x] **Enhance Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
-- [ ] **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop.
+- [x] **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop, and add a highlight colour feature for lint so that each recipe can have a different hightlight colour.
 - [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
 - [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
 - [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (e.g., using `prosemirror-multi-editor-diff` or Tiptap Snapshots).

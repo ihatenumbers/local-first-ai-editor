@@ -28,7 +28,7 @@
 			{#if documentState.activeScene}
 				<span>{documentState.activeScene.wordCount} Words</span>
 				<span class="flex items-center gap-1"
-					><CheckSquare size={14} /> {documentState.activeScene.todoList.length} To-Dos</span
+					><CheckSquare size={14} /> {documentState.activeScene.todoList.length} ToDos</span
 				>
 			{/if}
 		</div>
@@ -72,7 +72,7 @@
 				? 'text-indigo-600'
 				: 'text-zinc-400'}"
 			onclick={() => (uiState.showReviewPanel = !uiState.showReviewPanel)}
-			title="Toggle Review Recipes & To-Dos"
+			title="Toggle Review Recipes & ToDos"
 		>
 			<PanelsLeftRight size={18} />
 		</button>

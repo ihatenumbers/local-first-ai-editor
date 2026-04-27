@@ -4,6 +4,7 @@
 	import { uiState } from '$lib/state/ui.svelte';
 	import { buildSystemPrompt, buildUserMessage } from '$lib/utils/contextAssembler';
 	import { extractJsonFromText } from '$lib/utils/jsonParser';
+	import { dndzone } from 'svelte-dnd-action';
 	import {
 		Plus,
 		Trash2,
@@ -38,6 +39,10 @@
 						createdAt: Date.now()
 					};
 				}
+				if (!t.id) {
+					hasOldTodos = true;
+					return { ...t, id: crypto.randomUUID() };
+				}
 				return t;
 			});
 
@@ -46,6 +51,28 @@
 			}
 		}
 	});
+
+	function handleDndConsiderRecipes(e: CustomEvent<any>) {
+		if (documentState.activeScene) {
+			documentState.activeScene.reviewRecipes = e.detail.items;
+		}
+	}
+	function handleDndFinalizeRecipes(e: CustomEvent<any>) {
+		if (documentState.activeScene) {
+			documentState.activeScene.reviewRecipes = e.detail.items;
+		}
+	}
+
+	function handleDndConsiderTodos(e: CustomEvent<any>) {
+		if (documentState.activeScene) {
+			documentState.activeScene.todoList = e.detail.items;
+		}
+	}
+	function handleDndFinalizeTodos(e: CustomEvent<any>) {
+		if (documentState.activeScene) {
+			documentState.activeScene.todoList = e.detail.items;
+		}
+	}
 
 	async function runRecipe(recipe: ReviewRecipe) {
 		if (!documentState.activeScene) return;
@@ -138,7 +165,7 @@
 							...documentState.activeScene.todoList,
 							...newTodos
 						];
-						recipe.feedback = `Successfully added ${strings.length} To-Dos!`;
+						recipe.feedback = `Successfully added ${strings.length} ToDos!`;
 					}
 				}
 			} else if (recipe.outputFormat === 'lints' && uiState.editorInstance) {
@@ -184,7 +211,7 @@
 
 								if (found) {
 									editor.commands.setTextSelection({ from: posFrom, to: posTo });
-									editor.commands.setAnnotation(annotationId);
+									editor.commands.setAnnotation(annotationId, recipe.color || 'yellow');
 
 									if (!documentState.activeScene!.annotations)
 										documentState.activeScene!.annotations = [];
@@ -347,7 +374,16 @@
 				</button>
 			</div>
 
-			<div class="space-y-3">
+			<div
+				class="min-h-[50px] space-y-3"
+				use:dndzone={{
+					items: documentState.activeScene?.reviewRecipes || [],
+					flipDurationMs: 200,
+					dropTargetStyle: {}
+				}}
+				onconsider={handleDndConsiderRecipes}
+				onfinalize={handleDndFinalizeRecipes}
+			>
 				{#each documentState.activeScene?.reviewRecipes || [] as recipe (recipe.id)}
 					<div
 						class="group overflow-hidden rounded-md border border-zinc-200 bg-white shadow-sm transition-colors hover:border-indigo-300"
@@ -429,7 +465,7 @@
 											title="Automatically add items to Scene ToDos"
 											onclick={() => (recipe.outputFormat = 'todos')}
 										>
-											<Code size={12} class="mr-1 inline" /> To-Dos
+											<Code size={12} class="mr-1 inline" /> ToDos
 										</button>
 									</div>
 									<select
@@ -441,7 +477,34 @@
 										<option value="deep">Tier: Deep</option>
 									</select>
 								</div>
-
+								{#if recipe.outputFormat === 'lints'}
+									<div class="flex items-center gap-2 text-[10px] font-medium text-zinc-600">
+										Color:
+										<div class="flex gap-1">
+											{#each ['yellow', 'red', 'blue', 'green', 'purple', 'pink'] as c}
+												<button
+													onclick={() => (recipe.color = c)}
+													class="h-4 w-4 rounded-full border {recipe.color === c ||
+													(!recipe.color && c === 'yellow')
+														? 'scale-110 border-zinc-900'
+														: 'border-black/10'}"
+													style="background-color: var(--color-{c}-200, {c === 'yellow'
+														? '#fef08a'
+														: c === 'red'
+															? '#fecaca'
+															: c === 'blue'
+																? '#bfdbfe'
+																: c === 'green'
+																	? '#bbf7d0'
+																	: c === 'purple'
+																		? '#e9d5ff'
+																		: '#fbcfe8'})"
+													title={c}
+												></button>
+											{/each}
+										</div>
+									</div>
+								{/if}
 								<textarea
 									bind:value={recipe.prompt}
 									class="h-24 w-full resize-none rounded-md border-zinc-200 bg-zinc-50 p-2 font-mono text-sm placeholder:text-zinc-400 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
@@ -495,7 +558,7 @@
 														class="flex-1 rounded bg-indigo-500 py-1 text-xs font-medium text-white transition-colors hover:bg-indigo-600"
 														onclick={() => addTodoFromAnnotation(annotation)}
 													>
-														Add to To-Dos
+														Add to ToDos
 													</button>
 													<button
 														class="flex-1 rounded border border-zinc-200 bg-white py-1 text-xs font-medium text-zinc-600 transition-colors hover:bg-zinc-50"
@@ -639,7 +702,7 @@
 					{/if}
 				{/each}
 				{#if (documentState.activeScene?.todoList || []).length === 0}
-					<div class="p-4 text-center text-sm text-zinc-500">No To-Dos yet.</div>
+					<div class="p-4 text-center text-sm text-zinc-500">No ToDos yet.</div>
 				{/if}
 			</div>
 

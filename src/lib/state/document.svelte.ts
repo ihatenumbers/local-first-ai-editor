@@ -19,6 +19,7 @@ export interface ReviewRecipe {
 	isActive: boolean;
 	tier: 'fast' | 'balanced' | 'deep';
 	outputFormat: 'text' | 'lints' | 'todos';
+	color?: string;
 	feedback?: string;
 	isGenerating?: boolean;
 }

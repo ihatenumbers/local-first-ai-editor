@@ -10,7 +10,7 @@ declare module '@tiptap/core' {
 			/**
 			 * Set an annotation mark
 			 */
-			setAnnotation: (id: string) => ReturnType;
+			setAnnotation: (id: string, color?: string) => ReturnType;
 			/**
 			 * Toggle an annotation mark
 			 */
@@ -18,10 +18,19 @@ declare module '@tiptap/core' {
 			/**
 			 * Unset an annotation mark
 			 */
-			unsetAnnotation: (id: string) => ReturnType;
+			unsetAnnotation: (id: string, color?: string) => ReturnType;
 		};
 	}
 }
+
+const colorMap: Record<string, string> = {
+	yellow: 'bg-yellow-200/50 border-b-2 border-yellow-400/50 hover:bg-yellow-300/50 text-zinc-900',
+	red: 'bg-red-200/50 border-b-2 border-red-400/50 hover:bg-red-300/50 text-zinc-900',
+	blue: 'bg-blue-200/50 border-b-2 border-blue-400/50 hover:bg-blue-300/50 text-zinc-900',
+	green: 'bg-green-200/50 border-b-2 border-green-400/50 hover:bg-green-300/50 text-zinc-900',
+	purple: 'bg-purple-200/50 border-b-2 border-purple-400/50 hover:bg-purple-300/50 text-zinc-900',
+	pink: 'bg-pink-200/50 border-b-2 border-pink-400/50 hover:bg-pink-300/50 text-zinc-900'
+};
 
 export const AnnotationMark = Mark.create<AnnotationOptions>({
 	name: 'annotation',
@@ -41,11 +50,13 @@ export const AnnotationMark = Mark.create<AnnotationOptions>({
 	},
 
 	renderHTML({ HTMLAttributes }) {
+		const color = HTMLAttributes['data-color'] || 'yellow';
+		const colorClass = colorMap[color] || colorMap['yellow'];
+
 		return [
 			'span',
 			mergeAttributes(this.options.HTMLAttributes, HTMLAttributes, {
-				class:
-					'bg-yellow-200/50 border-b-2 border-yellow-400/50 cursor-pointer hover:bg-yellow-300/50 transition-colors'
+				class: `${colorClass} cursor-pointer transition-colors`
 			}),
 			0
 		];
@@ -64,6 +75,18 @@ export const AnnotationMark = Mark.create<AnnotationOptions>({
 						'data-annotation-id': attributes.id
 					};
 				}
+			},
+			color: {
+				default: 'yellow',
+				parseHTML: (element) => element.getAttribute('data-color'),
+				renderHTML: (attributes) => {
+					if (!attributes.color) {
+						return {};
+					}
+					return {
+						'data-color': attributes.color
+					};
+				}
 			}
 		};
 	},
@@ -71,9 +94,9 @@ export const AnnotationMark = Mark.create<AnnotationOptions>({
 	addCommands() {
 		return {
 			setAnnotation:
-				(id) =>
+				(id, color = 'yellow') =>
 				({ commands }) => {
-					return commands.setMark(this.name, { id });
+					return commands.setMark(this.name, { id, color });
 				},
 			toggleAnnotation:
 				(id) =>
