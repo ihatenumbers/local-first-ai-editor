@@ -1,27 +1,29 @@
 # Local First Editor with AIReviewer
 
-An AI powered, browser-native, privacy-first writing application. This platform shifts AI usage from "write this for me and lose my voice in the process" to "help me review and improve my writing". It acts as a semantic linter for your prose, with in document commentary, a todo list, plus chapter and scene navigation. 
+An AI powered, browser-native, privacy-first writing application. This platform shifts AI usage from "write this for me and lose my voice in the process" to "help me review and improve my writing". It acts as a semantic linter for your prose, with in document commentary, a todo list, plus chapter and scene navigation.
 
 It operates entirely client-side without a backend runtime server. It utilizes local browser storage (IndexedDB) for secure, offline-first saving, and standard AI API endpoints to provide context-aware critiques without altering your base manuscript unless explicitly approved.
 
 ## 🛠 Tech Stack
 
-* **Framework:** [SvelteKit](https://kit.svelte.dev/) (Configured for Static/SPA deployment)
-* **Styling:** [Tailwind CSS](https://tailwindcss.com/) & Typography/Forms plugins
-* **Editor Engine:** [Tiptap](https://tiptap.dev/) (Headless wrapper for ProseMirror)
-* **State & Offline Storage:** [Yjs](https://yjs.dev/) + `y-indexeddb`
-* **Icons:** [Lucide-Svelte](https://lucide.dev/guide/packages/lucide-svelte)
-* **Testing:** Vitest (Unit/Component) & Playwright (E2E)
+- **Framework:** [SvelteKit](https://kit.svelte.dev/) (Configured for Static/SPA deployment)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) & Typography/Forms plugins
+- **Editor Engine:** [Tiptap](https://tiptap.dev/) (Headless wrapper for ProseMirror)
+- **State & Offline Storage:** [Yjs](https://yjs.dev/) + `y-indexeddb`
+- **Icons:** [Lucide-Svelte](https://lucide.dev/guide/packages/lucide-svelte)
+- **Testing:** Vitest (Unit/Component) & Playwright (E2E)
 
 ---
 
 ## 🚀 Getting Started (Development)
 
 ### Prerequisites
-* Node.js (v18 or higher recommended)
-* NPM (or pnpm/yarn)
+
+- Node.js (v18 or higher recommended)
+- NPM (or pnpm/yarn)
 
 ### Installation
+
 Clone the repository and install the dependencies:
 
 ```bash
@@ -29,6 +31,7 @@ npm install
 ```
 
 ### Development
+
 Start the development server with Hot Module Replacement (HMR):
 
 ```bash
@@ -63,16 +66,19 @@ npm run preview
 This project is configured with comprehensive testing suites.
 
 **Run Unit & Component Tests (Vitest):**
+
 ```bash
 npm run test:unit
 ```
 
 **Run End-to-End Tests (Playwright):**
+
 ```bash
 npm run test:e2e
 ```
 
 **Run Linter (ESLint) & Formatter (Prettier):**
+
 ```bash
 npm run lint
 npm run format
@@ -104,4 +110,5 @@ npm run format
 - [ ] **Beta Release:** Build and publish the application for public Beta Testing.
 
 ---
-*Developed for a distraction-free, privacy-first writing experience.*
+
+_Developed for a distraction-free, privacy-first writing experience._
