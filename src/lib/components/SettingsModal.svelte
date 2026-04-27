@@ -42,6 +42,34 @@
         
         <div class="flex-1 overflow-y-auto p-6 space-y-6">
             
+            
+            
+            <div class="mb-4 space-y-3 pb-6 border-b border-zinc-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-zinc-700 uppercase tracking-wider">Debug AI Calls</h3>
+                        <p class="text-xs text-zinc-500">Log all AI requests and responses (prompts & returned text) to the browser console.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" bind:checked={settingsState.debugAiCalls} class="sr-only peer">
+                        <div class="w-11 h-6 bg-zinc-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+            </div>
+
+            <div class="mb-4 space-y-3 pb-6 border-b border-zinc-200">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h3 class="text-sm font-bold text-zinc-700 uppercase tracking-wider">Debug AI Calls</h3>
+                        <p class="text-xs text-zinc-500">Log all AI requests and responses (prompts & returned text) to the browser console.</p>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                        <input type="checkbox" bind:checked={settingsState.debugAiCalls} class="sr-only peer">
+                        <div class="w-11 h-6 bg-zinc-200 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-indigo-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-zinc-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-indigo-600"></div>
+                    </label>
+                </div>
+            </div>
+
             <div class="mb-4 space-y-3 pb-6 border-b border-zinc-200">
                 <h3 class="text-sm font-bold text-zinc-700 uppercase tracking-wider">Model Routing (Tiers)</h3>
                 <p class="text-xs text-zinc-500 mb-2">Assign your configured profiles to specific capability tiers.</p>

@@ -41,6 +41,8 @@ export class SettingsState {
         }
     ]);
 
+    debugAiCalls = $state(false);
+
     tiers = $state({
         fast: { providerId: 'default-ollama', modelId: '' },
         balanced: { providerId: 'default-openai', modelId: '' },
@@ -64,6 +66,9 @@ export class SettingsState {
                 }
             }
 
+            const storedDebug = localStorage.getItem('ai-reviewer-debug');
+            if (storedDebug) this.debugAiCalls = storedDebug === 'true';
+
             const storedTiers = localStorage.getItem('ai-reviewer-tiers');
             if (storedTiers) {
                 try {
@@ -77,6 +82,7 @@ export class SettingsState {
             $effect.root(() => {
                 $effect(() => {
                     localStorage.setItem('ai-reviewer-profiles', JSON.stringify($state.snapshot(this.profiles)));
+                    localStorage.setItem('ai-reviewer-debug', String(this.debugAiCalls));
                     localStorage.setItem('ai-reviewer-tiers', JSON.stringify($state.snapshot(this.tiers)));
                 });
             });

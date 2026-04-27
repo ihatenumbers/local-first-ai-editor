@@ -18,20 +18,22 @@ export function buildSystemPrompt(scene: Scene, project: Project, recipe: Review
         let prompt = `You are an expert editor and writing assistant. You have been hired to review a chapter of a book.\n\n`;
 
         if (recipe.outputFormat === 'lints') {
-                prompt += `CRITICAL: You must output YOUR ENTIRE RESPONSE as a valid JSON array of objects. Each object must follow exactly this schema:
-[
+                prompt += `CRITICAL: You must output YOUR ENTIRE RESPONSE as a valid JSON object containing a "response" array of objects. Each object must follow exactly this schema:
+{ "response": [
   {
     "original_text": "the exact snippet of text from the manuscript that needs changing",
     "suggestion": "your rewritten or fixed text",
     "reasoning": "brief explanation of why"
   }
-]\n\n`;
+]
+}\n\n`;
         } else if (recipe.outputFormat === 'todos') {
-                prompt += `CRITICAL: You must output YOUR ENTIRE RESPONSE as a valid JSON array of strings. Each string is a single bullet point or to-do item for the author to fix.
-[
+                prompt += `CRITICAL: You must output YOUR ENTIRE RESPONSE as a valid JSON object containing a "response" array of strings. Each string is a single bullet point or to-do item for the author to fix.
+{ "response": [
   "Fix pacing in paragraph 2",
   "Foreshadow the amulet"
-]\n\n`;
+]
+}\n\n`;
         }
 
         prompt += `### INSTRUCTIONS (YOUR PRIMARY TASK)\n${recipe.prompt}\n\n`;
