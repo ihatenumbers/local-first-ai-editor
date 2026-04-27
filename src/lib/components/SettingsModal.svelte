@@ -14,8 +14,8 @@
             type: 'openai',
             apiKey: '',
             baseUrl: 'https://api.openai.com/v1',
-            defaultModelId: 'gpt-4o-mini',
-            models: ['gpt-4o-mini', 'gpt-4o']
+            defaultModelId: '',
+            models: []
         });
     }
 
@@ -119,16 +119,38 @@
                         </div>
                     </div>
 
-                    <div class="mb-4">
-                        <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1" for="models-{profile.id}">Supported Models (Comma Separated)</label>
-                        <input 
-                            id="models-{profile.id}"
-                            type="text" 
-                            value={profile.models.join(', ')}
-                            oninput={(e) => profile.models = e.currentTarget.value.split(',').map(m => m.trim()).filter(Boolean)}
-                            class="w-full text-sm p-2 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
-                            placeholder="gpt-4o, gpt-3.5-turbo"
-                        />
+                    <div class="mb-4 bg-zinc-50 border border-zinc-200 rounded-md p-3">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide">Supported Models</span>
+                            <button 
+                                onclick={() => profile.models.push('')}
+                                class="text-xs font-bold text-indigo-600 hover:text-indigo-700 bg-indigo-100 hover:bg-indigo-200 px-2 py-1 rounded transition-colors flex items-center gap-1"
+                            >
+                                <Plus size={12} /> Add Model
+                            </button>
+                        </div>
+                        <div class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                            {#each profile.models as model, i}
+                                <div class="flex items-center gap-2 group/model">
+                                    <input 
+                                        type="text"
+                                        bind:value={profile.models[i]}
+                                        class="flex-1 text-sm p-1 border border-zinc-300 bg-white rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none"
+                                        placeholder="e.g. gpt-4o, llama3..."
+                                    />
+                                    <button 
+                                        onclick={() => profile.models = profile.models.filter((_, idx) => idx !== i)}
+                                        class="text-zinc-400 hover:text-red-500 p-1 opacity-0 group-hover/model:opacity-100 transition-opacity"
+                                        title="Remove Model"
+                                    >
+                                        <Trash2 size={14} />
+                                    </button>
+                                </div>
+                            {/each}
+                            {#if profile.models.length === 0}
+                                <div class="text-xs text-zinc-400 italic py-1">No models configured. Add one above.</div>
+                            {/if}
+                        </div>
                     </div>
 
                     <div class="mb-4">
@@ -149,16 +171,6 @@
                                 type="password" 
                                 bind:value={profile.apiKey}
                                 placeholder={profile.type === 'local' ? 'Not needed for Local' : 'sk-...'}
-                                class="w-full text-sm p-2 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none font-mono"
-                            />
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-zinc-500 uppercase tracking-wide mb-1" for="model-{profile.id}">Default Model String</label>
-                            <input 
-                                id="model-{profile.id}"
-                                type="text" 
-                                bind:value={profile.defaultModelId}
-                                placeholder="gpt-4o, llama3, etc..."
                                 class="w-full text-sm p-2 border border-zinc-300 rounded focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 focus:outline-none font-mono"
                             />
                         </div>

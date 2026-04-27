@@ -18,8 +18,8 @@ export class SettingsState {
             type: 'openai',
             apiKey: '',
             baseUrl: 'https://api.openai.com/v1',
-            defaultModelId: 'gpt-4o-mini',
-            models: ['gpt-4o-mini', 'gpt-4o']
+            defaultModelId: '',
+            models: []
         },
         {
             id: 'default-openrouter',
@@ -27,8 +27,8 @@ export class SettingsState {
             type: 'openai',
             apiKey: '',
             baseUrl: 'https://openrouter.ai/api/v1',
-            defaultModelId: 'anthropic/claude-3-haiku',
-            models: ['anthropic/claude-3-haiku', 'anthropic/claude-3-opus', 'anthropic/claude-3.5-sonnet', 'meta-llama/llama-3-70b-instruct']
+            defaultModelId: '',
+            models: []
         },
         {
             id: 'default-ollama',
@@ -36,15 +36,15 @@ export class SettingsState {
             type: 'local',
             apiKey: 'ollama',
             baseUrl: 'http://localhost:11434/v1',
-            defaultModelId: 'llama3',
-            models: ['llama3', 'mistral', 'phi3']
+            defaultModelId: '',
+            models: []
         }
     ]);
 
     tiers = $state({
-        fast: { providerId: 'default-ollama', modelId: 'llama3' },
-        balanced: { providerId: 'default-openai', modelId: 'gpt-4o' },
-        deep: { providerId: 'default-openrouter', modelId: 'anthropic/claude-3-opus' }
+        fast: { providerId: 'default-ollama', modelId: '' },
+        balanced: { providerId: 'default-openai', modelId: '' },
+        deep: { providerId: 'default-openrouter', modelId: '' }
     });
 
     constructor() {
