@@ -468,11 +468,17 @@
 									tabindex="0"
 									aria-label="Drag Recipe"
 									class="cursor-grab p-1 text-zinc-400 hover:text-zinc-600 active:cursor-grabbing"
-									onmousedown={() => {
+									onmouseenter={() => {
 										dragDisabledRecipes = false;
+									}}
+									onmouseleave={() => {
+										dragDisabledRecipes = true;
 									}}
 									ontouchstart={() => {
 										dragDisabledRecipes = false;
+									}}
+									ontouchend={() => {
+										dragDisabledRecipes = true;
 									}}
 								>
 									<GripVertical size={16} />
@@ -710,11 +716,17 @@
 								tabindex="0"
 								aria-label="Drag Todo"
 								class="mt-1 cursor-grab p-0.5 text-zinc-300 hover:text-zinc-600 active:cursor-grabbing"
-								onmousedown={() => {
+								onmouseenter={() => {
 									dragDisabledTodos = false;
+								}}
+								onmouseleave={() => {
+									dragDisabledTodos = true;
 								}}
 								ontouchstart={() => {
 									dragDisabledTodos = false;
+								}}
+								ontouchend={() => {
+									dragDisabledTodos = true;
 								}}
 							>
 								<GripVertical size={14} />
