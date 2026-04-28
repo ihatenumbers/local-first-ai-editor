@@ -21,6 +21,16 @@
 	let dragDisabledRecipes = $state(true);
 	let dragDisabledTodos = $state(true);
 
+	const COLOR_MAP: Record<string, { bg: string; border: string; text: string; hover: string }> = {
+		yellow: { bg: 'bg-yellow-50', border: 'border-yellow-200', text: 'text-yellow-800', hover: 'hover:border-yellow-400' },
+		red: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-800', hover: 'hover:border-red-400' },
+		blue: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-800', hover: 'hover:border-blue-400' },
+		green: { bg: 'bg-green-50', border: 'border-green-200', text: 'text-green-800', hover: 'hover:border-green-400' },
+		purple: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-800', hover: 'hover:border-purple-400' },
+		pink: { bg: 'bg-pink-50', border: 'border-pink-200', text: 'text-pink-800', hover: 'hover:border-pink-400' },
+		gray: { bg: 'bg-zinc-100', border: 'border-zinc-300', text: 'text-zinc-800', hover: 'hover:border-zinc-400' }
+	};
+
 	const openTodos = $derived(
 		(documentState.activeScene?.todoList || []).filter(
 			(t) => t && typeof t === 'object' && (t.status === 'open' || t.status === 'ignored')
@@ -362,8 +372,30 @@
 		);
 	}
 
+	function changeTodoStatus(todo: import('$lib/state/document.svelte').TodoItem, status: 'open' | 'completed' | 'ignored') {
+		if (!documentState.activeScene || !uiState.editorInstance) return;
+		const idx = documentState.activeScene.todoList.findIndex((t) => t.id === todo.id);
+		if (idx !== -1) {
+			documentState.activeScene.todoList[idx].status = status;
+			if ((status === 'completed' || status === 'ignored') && todo.editorId) {
+				const { posFrom, posTo } = findAnnotationPos(todo.editorId);
+				if (posFrom !== -1 && posTo !== -1) {
+					uiState.editorInstance
+						.chain()
+						.focus()
+						.setTextSelection({ from: posFrom, to: posTo })
+						.unsetAnnotation(todo.editorId)
+						.run();
+				}
+			}
+		}
+	}
+
 	function addTodoFromAnnotation(annotation: import('$lib/state/document.svelte').Annotation) {
 		if (!documentState.activeScene) return;
+
+		const recipe = documentState.project?.reviewRecipes.find(r => r.id === annotation.recipeId);
+		const recipeColor = recipe?.color || 'yellow';
 
 		const todoText = `Address critique: "${annotation.commentary}" (Context: "${annotation.originalText}")`;
 		documentState.activeScene.todoList.push({
@@ -371,11 +403,16 @@
 			text: todoText,
 			status: 'open',
 			source: 'lint',
-			createdAt: Date.now()
+			createdAt: Date.now(),
+			color: recipeColor,
+			editorId: annotation.id
 		});
 
-		// Clear the annotation since it's now tracked as a To-Do
-		ignoreAnnotation(annotation);
+		// Clear the annotation from the lints list, but DO NOT unset it in Tiptap 
+		// so the highlight persists and is now owned by the ToDo item.
+		documentState.activeScene.annotations = (documentState.activeScene.annotations || []).filter(
+			(a) => a.id !== annotation.id
+		);
 	}
 
 	function ignoreAnnotation(annotation: import('$lib/state/document.svelte').Annotation) {
@@ -626,9 +663,9 @@
 									<div class="mt-2 space-y-2">
 										{#each (documentState.activeScene.annotations || []).filter((a) => a.recipeId === recipe.id && !a.isIgnored) as annotation (annotation.id)}
 											<div
-												class="group relative rounded-md border border-yellow-200 bg-yellow-50 p-3 text-sm shadow-sm transition-colors hover:border-yellow-400"
+												class="group relative rounded-md border p-3 text-sm shadow-sm transition-colors {COLOR_MAP[recipe.color || 'yellow']?.bg || 'bg-yellow-50'} {COLOR_MAP[recipe.color || 'yellow']?.border || 'border-yellow-200'} {COLOR_MAP[recipe.color || 'yellow']?.hover || 'hover:border-yellow-400'}"
 											>
-												<div class="mb-1 text-xs font-bold tracking-wide text-yellow-800 uppercase">
+												<div class="mb-1 text-xs font-bold tracking-wide uppercase {COLOR_MAP[recipe.color || 'yellow']?.text || 'text-yellow-800'}">
 													Found Issue:
 												</div>
 												<div class="mb-1.5 truncate font-mono text-xs text-zinc-400 line-through">
@@ -706,10 +743,7 @@
 				{#each documentState.activeScene?.todoList || [] as todo, i (typeof todo === 'object' && todo && 'id' in todo ? todo.id : i)}
 					{#if typeof todo !== 'string'}
 						<div
-							class="group mb-1 flex items-start gap-2 rounded border border-transparent p-1.5 hover:border-zinc-200 hover:bg-zinc-50 {todo.status ===
-							'ignored'
-								? 'line-through opacity-50'
-								: ''}"
+							class="group mb-1 flex items-start gap-2 rounded border p-1.5 {todo.status === 'ignored' ? 'line-through opacity-50' : ''} {todo.color ? `${COLOR_MAP[todo.color]?.bg} ${COLOR_MAP[todo.color]?.border}` : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50'}"
 						>
 							<div
 								role="button"
@@ -736,16 +770,7 @@
 								checked={todo.status === 'completed'}
 								class="mt-1 h-4 w-4 flex-shrink-0 cursor-pointer rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500"
 								onchange={(e) => {
-									if (documentState.activeScene) {
-										const idx = documentState.activeScene.todoList.findIndex(
-											(t) => t.id === todo.id
-										);
-										if (idx !== -1) {
-											documentState.activeScene.todoList[idx].status = e.currentTarget.checked
-												? 'completed'
-												: 'open';
-										}
-									}
+									changeTodoStatus(todo, e.currentTarget.checked ? 'completed' : 'open');
 								}}
 							/>
 							<div class="flex-1 text-sm break-words text-zinc-800">
@@ -764,15 +789,7 @@
 										class="text-zinc-400 hover:text-orange-500"
 										title={todo.status === 'ignored' ? 'Unignore' : 'Ignore'}
 										onclick={() => {
-											if (documentState.activeScene) {
-												const idx = documentState.activeScene.todoList.findIndex(
-													(t) => t.id === todo.id
-												);
-												if (idx !== -1) {
-													documentState.activeScene.todoList[idx].status =
-														todo.status === 'ignored' ? 'open' : 'ignored';
-												}
-											}
+											changeTodoStatus(todo, todo.status === 'ignored' ? 'open' : 'ignored');
 										}}
 									>
 										<svg
@@ -833,12 +850,24 @@
 				placeholder="Add a scene to-do..."
 				onkeydown={(e) => {
 					if (e.key === 'Enter' && e.currentTarget.value.trim() && documentState.activeScene) {
+						let newEditorId = undefined;
+						let newColor = undefined;
+						
+						// If text is selected in the editor, highlight it and bind to this ToDo
+						if (uiState.editorInstance && !uiState.editorInstance.state.selection.empty) {
+							newEditorId = crypto.randomUUID();
+							newColor = 'gray';
+							uiState.editorInstance.chain().focus().setAnnotation(newEditorId, newColor).run();
+						}
+
 						documentState.activeScene.todoList.push({
 							id: crypto.randomUUID(),
 							text: e.currentTarget.value.trim(),
 							status: 'open',
 							source: 'user',
-							createdAt: Date.now()
+							createdAt: Date.now(),
+							editorId: newEditorId,
+							color: newColor
 						});
 						e.currentTarget.value = '';
 					}

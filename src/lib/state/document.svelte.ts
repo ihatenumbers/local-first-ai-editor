@@ -36,6 +36,8 @@ export interface TodoItem {
 	status: 'open' | 'completed' | 'ignored';
 	source: 'user' | 'recipe' | 'lint';
 	createdAt: number;
+	color?: string;
+	editorId?: string;
 }
 
 export interface Scene {

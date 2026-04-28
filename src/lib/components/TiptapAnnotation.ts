@@ -29,7 +29,8 @@ const colorMap: Record<string, string> = {
 	blue: 'bg-blue-200/50 border-b-2 border-blue-400/50 hover:bg-blue-300/50 text-zinc-900',
 	green: 'bg-green-200/50 border-b-2 border-green-400/50 hover:bg-green-300/50 text-zinc-900',
 	purple: 'bg-purple-200/50 border-b-2 border-purple-400/50 hover:bg-purple-300/50 text-zinc-900',
-	pink: 'bg-pink-200/50 border-b-2 border-pink-400/50 hover:bg-pink-300/50 text-zinc-900'
+	pink: 'bg-pink-200/50 border-b-2 border-pink-400/50 hover:bg-pink-300/50 text-zinc-900',
+	gray: 'bg-zinc-200/50 border-b-2 border-zinc-400/50 hover:bg-zinc-300/50 text-zinc-900'
 };
 
 export const AnnotationMark = Mark.create<AnnotationOptions>({
