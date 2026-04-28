@@ -102,12 +102,23 @@ npm run format
 
 ## 🗺 Phase 2 Roadmap (Beta)
 
+- [x] **Enhance Editor:** Enhance the editor controls to include justification, strike-through, formatting, text highlights, task lists, undo/redo, and tables.
+- [x] **AI Recipes & ToDos UX:** Recipe-specific highlight colors, drag-and-drop reordering, scrollbar fixes, and background pattern tracking from Lint to ToDo.
+- [x] **Selection-based ToDos:** Dynamic binding of selected editor text to manual ToDos with gray annotations.
+- [ ] **Collapsible Text Output:** Toggle visibility for raw output on "Text" recipes in the review panel.
+- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement an interactive conversational AI system.
+- [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
 - [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
 - [ ] **WebGPU / Local Browser AI:** Support downloading 4GB+ quantized models via WebLLM or Transformers.js for fully local offline AI generation.
 - [ ] **Complex Recipe Builder UI:** Create a node-based or slider-based UI for custom prompts.
 - [ ] **Full File System Access API Integration:** Export and sync to physical `.md` files on the user's hard drive.
-- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement an interactive conversational AI system.
 - [ ] **Beta Release:** Build and publish the application for public Beta Testing.
+
+---
+
+## 📝 License
+
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
