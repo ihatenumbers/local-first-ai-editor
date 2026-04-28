@@ -70,6 +70,11 @@ The application will utilize an ultrawide-optimized 4-column layout, which grace
 - **WebGPU / Local Browser AI:** Support downloading 4GB+ quantized models via WebLLM or Transformers.js for fully local offline AI generation.
 - **Complex Recipe Builder UI:** Create a node-based or slider-based UI for custom prompts.
 - **Full File System Access API Integration:** Export and sync to physical `.md` files on the user's hard drive.
+- **UX & UI Iteration (Review Recipes Panel):**
+  - Address scrolling boundaries vs long text outputs (remove nested or conflicting scrollbars).
+  - Modify lint cards to incorporate colored backgrounds that match their respective text highlights.
+  - Distinguish text selection areas from drag-and-drop handles so users can copy text out of a lint/todo card without triggering a drag event.
+  - Update "Scene ToDos" to inherit their source colors and implement drag-and-drop sorting capabilities, while streamlining their success messaging.
 - **Beta Release:** Build and publish the application for public Beta Testing.
 
 ---

@@ -12,11 +12,14 @@
 		ChevronRight,
 		MessageSquare,
 		Code,
-		Play
+		Play,
+		GripVertical
 	} from 'lucide-svelte';
 
 	let isResizing = $state(false);
 	let expandedRecipes = $state<Record<string, boolean>>({});
+	let dragDisabledRecipes = $state(true);
+	let dragDisabledTodos = $state(true);
 
 	const openTodos = $derived(
 		(documentState.activeScene?.todoList || []).filter(
@@ -61,6 +64,7 @@
 		if (documentState.activeScene) {
 			documentState.activeScene.reviewRecipes = e.detail.items;
 		}
+		dragDisabledRecipes = true;
 	}
 
 	function handleDndConsiderTodos(e: CustomEvent<any>) {
@@ -72,6 +76,7 @@
 		if (documentState.activeScene) {
 			documentState.activeScene.todoList = e.detail.items;
 		}
+		dragDisabledTodos = true;
 	}
 
 	async function runRecipe(recipe: ReviewRecipe) {
@@ -173,7 +178,7 @@
 				if (parsed && Array.isArray(parsed.response)) {
 					const editor = uiState.editorInstance;
 					const doc = editor.view.state.doc;
-					
+
 					// Build text content and position map ONCE for the whole document
 					let extractedText = '';
 					let posMapping: number[] = [];
@@ -203,25 +208,28 @@
 							if (searchString.length < 3) return; // Skip tiny strings
 
 							try {
-								// AI responses often hallucinate skipped text (e.g. "..."), change punctuation, 
+								// AI responses often hallucinate skipped text (e.g. "..."), change punctuation,
 								// or substitute hyphens. First we try a strict but typographically-fuzzy full match.
 								const escapedSearch = escapeRegExp(searchString);
-								let fuzzyRegexStr = escapedSearch.replace(/\s+/g, '\\s+')
-									.replace(/['"‘’“”]/g, "['\"‘’“”]")
-									.replace(/[-—–]/g, "[-—–]")
-									.replace(/\\\.\\\.\\\.|…/g, "(\\\.\\\.\\\.|…)");
-								
+								let fuzzyRegexStr = escapedSearch
+									.replace(/\s+/g, '\\s+')
+									.replace(/['"‘’“”]/g, '[\'"‘’“”]')
+									.replace(/[-—–]/g, '[-—–]')
+									.replace(/\\\.\\\.\\\.|…/g, '(\\\.\\\.\\\.|…)');
+
 								let match = extractedText.match(new RegExp(fuzzyRegexStr, 'i'));
 
-								// If standard fuzzy match fails, drop back to checking just the first and last few words. 
+								// If standard fuzzy match fails, drop back to checking just the first and last few words.
 								// Models routinely summarize the middle of a string that they're quoting.
 								if (!match) {
-									const alphaWords = searchString.split(/[\s\W]+/).filter((w: string) => w.length > 0);
+									const alphaWords = searchString
+										.split(/[\s\W]+/)
+										.filter((w: string) => w.length > 0);
 									if (alphaWords.length >= 8) {
 										// We need at least 8 words to safely take 4 from start and 4 from end without overlapping
 										const startWords = alphaWords.slice(0, 4).map(escapeRegExp).join('[\\s\\W]*');
 										const endWords = alphaWords.slice(-4).map(escapeRegExp).join('[\\s\\W]*');
-										
+
 										// Use [\s\S]*? with max char bounds so we don't accidentally match half the entire book.
 										const fallbackRegexStr = `${startWords}[\\s\\S]{0,1000}?${endWords}`;
 										const fallbackRegex = new RegExp(fallbackRegexStr, 'i');
@@ -236,7 +244,7 @@
 								if (match && match.index !== undefined) {
 									// Map from string index back to ProseMirror document positions
 									posFrom = posMapping[match.index];
-									
+
 									// Calculate end index mapping carefully
 									let endIndex = match.index + match[0].length - 1;
 									if (endIndex >= posMapping.length) endIndex = posMapping.length - 1;
@@ -249,7 +257,7 @@
 
 									if (!documentState.activeScene!.annotations)
 										documentState.activeScene!.annotations = [];
-										
+
 									documentState.activeScene!.annotations.push({
 										id: annotationId,
 										recipeId: recipe.id,
@@ -266,10 +274,11 @@
 									if (!documentState.activeScene!.todoList) {
 										documentState.activeScene!.todoList = [];
 									}
-									
-									const suggestionText = item.suggestion || item.commentary || item.reasoning || 'No comment provided';
-									
-									// Fallback: put unanchored lints in the ToDo list 
+
+									const suggestionText =
+										item.suggestion || item.commentary || item.reasoning || 'No comment provided';
+
+									// Fallback: put unanchored lints in the ToDo list
 									documentState.activeScene!.todoList = [
 										...documentState.activeScene!.todoList,
 										{
@@ -282,11 +291,11 @@
 									];
 								}
 							} catch (e) {
-								console.error("Invalid regex built for:", searchString, e);
+								console.error('Invalid regex built for:', searchString, e);
 							}
 						}
 					});
-					
+
 					const unanchoredCount = parsed.response.length - matchCount;
 					if (unanchoredCount > 0) {
 						recipe.feedback = `Analysis complete. Anchored ${matchCount} out of ${parsed.response.length} comments. Added ${unanchoredCount} unanchored comments to ToDos.`;
@@ -442,7 +451,8 @@
 				use:dndzone={{
 					items: documentState.activeScene?.reviewRecipes || [],
 					flipDurationMs: 200,
-					dropTargetStyle: {}
+					dropTargetStyle: {},
+					dragDisabled: dragDisabledRecipes
 				}}
 				onconsider={handleDndConsiderRecipes}
 				onfinalize={handleDndFinalizeRecipes}
@@ -453,6 +463,20 @@
 					>
 						<div class="flex items-center justify-between bg-zinc-50/50 p-3">
 							<div class="flex flex-1 items-center gap-2">
+								<div
+									role="button"
+									tabindex="0"
+									aria-label="Drag Recipe"
+									class="cursor-grab p-1 text-zinc-400 hover:text-zinc-600 active:cursor-grabbing"
+									onmousedown={() => {
+										dragDisabledRecipes = false;
+									}}
+									ontouchstart={() => {
+										dragDisabledRecipes = false;
+									}}
+								>
+									<GripVertical size={16} />
+								</div>
 								<button
 									class="text-zinc-400 hover:text-indigo-600"
 									onclick={() => (expandedRecipes[recipe.id] = !expandedRecipes[recipe.id])}
@@ -577,7 +601,7 @@
 								{#if recipe.feedback || recipe.isGenerating}
 									{#if recipe.outputFormat === 'text' || recipe.isGenerating || (recipe.feedback || '').startsWith('Successfully') || (recipe.feedback || '').startsWith('Error:')}
 										<div
-											class="relative mt-3 rounded-md border border-indigo-100 bg-indigo-50/50 p-3 font-sans text-sm whitespace-pre-wrap text-zinc-700"
+											class="relative mt-3 max-h-64 overflow-y-auto rounded-md border border-indigo-100 bg-indigo-50/50 p-3 font-sans text-sm whitespace-pre-wrap text-zinc-700"
 										>
 											{#if recipe.isGenerating && !recipe.feedback}
 												<span class="animate-pulse text-indigo-400">Thinking...</span>
@@ -663,16 +687,38 @@
 			</div>
 
 			<div
-				class="mb-2 h-64 overflow-y-auto rounded-md border border-zinc-300 bg-white p-2 shadow-sm"
+				class="mb-2 rounded-md border border-zinc-300 bg-white p-2 shadow-sm"
+				use:dndzone={{
+					items: documentState.activeScene?.todoList || [],
+					flipDurationMs: 200,
+					dropTargetStyle: {},
+					dragDisabled: dragDisabledTodos
+				}}
+				onconsider={handleDndConsiderTodos}
+				onfinalize={handleDndFinalizeTodos}
 			>
 				{#each documentState.activeScene?.todoList || [] as todo, i (typeof todo === 'object' && todo && 'id' in todo ? todo.id : i)}
 					{#if typeof todo !== 'string'}
 						<div
-							class="group mb-1 flex items-start gap-2 rounded p-1.5 hover:bg-zinc-50 {todo.status ===
+							class="group mb-1 flex items-start gap-2 rounded border border-transparent p-1.5 hover:border-zinc-200 hover:bg-zinc-50 {todo.status ===
 							'ignored'
 								? 'line-through opacity-50'
 								: ''}"
 						>
+							<div
+								role="button"
+								tabindex="0"
+								aria-label="Drag Todo"
+								class="mt-1 cursor-grab p-0.5 text-zinc-300 hover:text-zinc-600 active:cursor-grabbing"
+								onmousedown={() => {
+									dragDisabledTodos = false;
+								}}
+								ontouchstart={() => {
+									dragDisabledTodos = false;
+								}}
+							>
+								<GripVertical size={14} />
+							</div>
 							<input
 								type="checkbox"
 								checked={todo.status === 'completed'}

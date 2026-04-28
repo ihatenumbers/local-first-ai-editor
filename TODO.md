@@ -97,7 +97,15 @@ Connecting the AI's thoughts back to the specific words in the editor.
 
 - [x] **Enhance Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
 - [x] **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop, and add a highlight colour feature for lint so that each recipe can have a different hightlight colour.
-- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
+- [ ] **UX Design Review (Review Recipes Panel):**
+  - Discuss and agree on a UX design for the Review Recipes Panel.
+  - Keep "Text" recipes but make the chat output collapsable
+  - Fix missing scrollbars on text output cards and lint output cards.
+  - Review drag-and-drop mechanics vs text selection on lint cards.
+  - Review nested scrollbar issues between the Scene ToDos area and the main panel.
+  - Ensure Scene ToDos preserve their assigned background colors when copied from lints and implement missing drag-and-drop.
+  - Add ability for ToDos to highlight any selected text and associate that with the ToDo - will will use a light gray background for ToDos with selected text (but if copied from lint then they keep their existing colour)
+- [ ] **AI Chat Panel:** Implement a new Far Right Panel "AI Chat" and implement a conversational system.  Connect ToDos and Lints to the chat panel, e.g. each of these will have the potential to their own conversation record
 - [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
 - [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (e.g., using `prosemirror-multi-editor-diff` or Tiptap Snapshots).
 - [ ] **WebGPU / Local Browser AI:** Integrate WebLLM or Transformers.js to support fully local model execution.
