@@ -140,7 +140,10 @@ export async function callAI(params: AICallParams): Promise<Response> {
 		body: JSON.stringify(params)
 	});
 
-	if (res.status === 404) {
+	// On static hosting the SPA fallback returns index.html (200, text/html)
+	// for any unknown route. Detect that and treat it as "no proxy".
+	const contentType = res.headers.get('content-type') || '';
+	if (res.status === 404 || contentType.includes('text/html')) {
 		proxyAvailable = false;
 		return callDirect(params);
 	}

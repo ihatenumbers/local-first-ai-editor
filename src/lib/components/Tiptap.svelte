@@ -98,6 +98,10 @@
 		const activeVersionId = documentState.activeScene?.activeVersionId;
 		if (!activeVersionId) return;
 
+		// Pre-register the XmlFragment on the ydoc so Tiptap's Collaboration
+		// extension doesn't trigger the "Add Yjs type before reading" warning.
+		documentState.ydoc.getXmlFragment('scene-' + activeVersionId);
+
 		const newEditor = new Editor({
 			element: element,
 			extensions: [
