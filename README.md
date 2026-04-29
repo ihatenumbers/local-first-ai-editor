@@ -164,7 +164,6 @@ npm run format
 ## 🗺 Phase 3 Roadmap
 
 - [ ] **Multi-story support:** Add ability to open, switch between, and manage multiple independent projects.
-- [ ] **Collapsible Text Output:** Toggle visibility for raw output on "Text" recipes in the review panel.
 - [ ] **In-Editor AI:** Adding `/` commands into the editor (e.g. `/reword`, `/check_story`).
 - [ ] **Inline Diff/Tracked Changes:** Inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
 - [ ] **WebGPU / Local Browser AI:** Support downloading quantized models via WebLLM or Transformers.js for fully local offline AI generation.
