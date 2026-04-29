@@ -119,7 +119,7 @@ npm run format
 
 ---
 
-## 🗺 Phase 1 Roadmap (MVP)
+## Phase 1 Roadmap (MVP)
 
 - [x] Scaffold SvelteKit project with TypeScript, Tailwind, and testing suites.
 - [x] Install core dependencies (Tiptap, Yjs, Lucide).
@@ -133,7 +133,7 @@ npm run format
 
 ---
 
-## 🗺 Phase 2 Roadmap (Beta) — Complete
+## Phase 2 Roadmap (Beta) — Complete
 
 - [x] **Enhance Editor:** Justification, strike-through, code text, text highlights, task lists, undo/redo, and tables via Tiptap.
 - [x] **AI Recipes & ToDos UX:** Recipe-specific highlight colors, drag-and-drop reordering, scrollbar fixes, and background pattern tracking from Lint to ToDo.
@@ -146,13 +146,19 @@ npm run format
 
 ---
 
-## 🗺 Phase 3 Roadmap
+## Phase 3 Roadmap
 
 - [ ] **Multi-story support:** Add ability to open, switch between, and manage multiple independent projects.
 - [ ] **In-Editor AI:** Adding `/` commands into the editor (e.g. `/reword`, `/check_story`).
 - [ ] **Inline Diff/Tracked Changes:** Inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
 - [ ] **WebGPU / Local Browser AI:** Support downloading quantized models via WebLLM or Transformers.js for fully local offline AI generation.
 - [ ] **Beta Release:** Configure build pipelines and publish the compiled application for public Beta Testing.
+
+---
+
+## Editor Working View
+
+![Local First AI Editor](docs/Local_First_AI_Editor-Example.png)
 
 ---
 

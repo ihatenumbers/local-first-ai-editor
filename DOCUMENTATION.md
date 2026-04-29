@@ -46,6 +46,12 @@ This project is **ALPHA**
 
 ---
 
+## Editor Working View
+
+![Local First AI Editor](docs/Local_First_AI_Editor-Example.png)
+
+---
+
 ## Getting Started
 
 ### First Launch
