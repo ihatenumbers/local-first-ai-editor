@@ -5,6 +5,7 @@
 	import { buildSystemPrompt, buildUserMessage } from '$lib/utils/contextAssembler';
 	import { extractJsonFromText } from '$lib/utils/jsonParser';
 	import { buildFuzzyRegex, buildFallbackRegex } from '$lib/utils/fuzzySearch';
+	import { callAI } from '$lib/utils/aiClient';
 	import { dndzone } from 'svelte-dnd-action';
 	import {
 		Plus,
@@ -123,21 +124,17 @@
 		}
 
 		try {
-			const res = await fetch('/api/ai/review', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					baseUrl: profile.baseUrl,
-					apiKey: profile.apiKey,
-					providerType: profile.type,
-					model: tierConfig.modelId,
-					systemPrompt,
-					userPrompt,
-					responseFormat: recipe.outputFormat,
-					temperature: recipe.temperature ?? 0.3,
-					maxTokens: recipe.maxTokens ?? undefined
-				})
-			});
+const res = await callAI({
+                                        baseUrl: profile.baseUrl,
+                                        apiKey: profile.apiKey,
+                                        providerType: profile.type,
+                                        model: tierConfig.modelId,
+                                        systemPrompt,
+                                        userPrompt,
+                                        responseFormat: recipe.outputFormat,
+                                        temperature: recipe.temperature ?? 0.3,
+                                        maxTokens: recipe.maxTokens ?? undefined
+                                });
 
 			if (!res.ok) {
 				const err = await res.json();

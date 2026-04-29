@@ -70,8 +70,8 @@
 
 		if (annotationSpan) {
 			const id = annotationSpan.getAttribute('data-annotation-id');
-			const annotation = documentState.activeScene?.annotations?.find(
-				(a) => a.id === id && !a.isIgnored
+			const annotation = documentState.activeVersion?.annotations?.find(
+				(a: import('$lib/state/document.svelte').Annotation) => a.id === id && !a.isIgnored
 			);
 
 			if (annotation) {

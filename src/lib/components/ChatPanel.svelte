@@ -3,6 +3,7 @@
 	import { documentState, type ChatMessage } from '$lib/state/document.svelte';
 	import { settingsState } from '$lib/state/settings.svelte';
 	import { buildChatSystemPrompt } from '$lib/utils/contextAssembler';
+	import { callAI } from '$lib/utils/aiClient';
 	import { Send, X, Trash2 } from 'lucide-svelte';
 
 	const CHAT_SYSTEM_PROMPT = `You are an expert writing assistant and editor working with a novelist on their manuscript. You have access to the current scene text, writing objectives, and story context provided below. Provide thoughtful, specific, and constructive feedback. Reference the actual text when making suggestions. Be concise unless depth is needed.`;
@@ -92,21 +93,17 @@
 		}
 
 		try {
-			const res = await fetch('/api/ai/review', {
-				method: 'POST',
-				headers: { 'Content-Type': 'application/json' },
-				body: JSON.stringify({
-					baseUrl: profile.baseUrl,
-					apiKey: profile.apiKey,
-					providerType: profile.type,
-					model: tierConfig.modelId,
-					systemPrompt,
-					messages: historyMessages,
-					responseFormat: 'text',
-					temperature: activeRecipe.temperature ?? 0.7,
-					maxTokens: activeRecipe.maxTokens ?? undefined
-				})
-			});
+const res = await callAI({
+                                        baseUrl: profile.baseUrl,
+                                        apiKey: profile.apiKey,
+                                        providerType: profile.type,
+                                        model: tierConfig.modelId,
+                                        systemPrompt,
+                                        messages: historyMessages,
+                                        responseFormat: 'text',
+                                        temperature: activeRecipe.temperature ?? 0.7,
+                                        maxTokens: activeRecipe.maxTokens ?? undefined
+                                });
 
 			if (!res.ok) {
 				const err = await res.json().catch(() => ({ error: res.statusText }));

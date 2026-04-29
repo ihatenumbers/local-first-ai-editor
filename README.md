@@ -49,19 +49,63 @@ npm run dev -- --open
 
 ## 🏗 Building for Production
 
-To create a production-ready, highly optimized static version of the app:
-
 ```bash
 npm run build
+npm run preview   # preview the build locally
 ```
 
-You can preview the compiled production build locally with:
+The app supports two deployment modes. The AI client (`aiClient.ts`) automatically detects which mode is active at runtime — no code changes needed between modes.
+
+---
+
+### Mode 1 — Serverless Deployment (Vercel, Cloudflare Pages, Netlify)
+
+This is the **default** configuration. The SvelteKit server route at `/api/ai/review` acts as a CORS proxy, forwarding AI requests on behalf of the browser. This is the recommended mode for public hosting.
+
+**No configuration changes required.** Push to Vercel, Cloudflare Pages, or Netlify and deploy normally. `adapter-auto` detects the platform and configures the correct serverless output.
 
 ```bash
-npm run preview
+# Example: Vercel
+npm run build   # adapter-auto outputs to .vercel/output
 ```
 
-> **Note on Deployment:** Because this app is designed to run entirely in the browser without a Node.js server, we will eventually configure SvelteKit to use `@sveltejs/adapter-static` to output pure HTML/CSS/JS files that can be hosted anywhere (GitHub Pages, Cloudflare Pages, Vercel, or a local file server).
+At runtime `callAI` will route through the proxy, keeping API keys out of browser network logs.
+
+---
+
+### Mode 2 — Pure Static Hosting (GitHub Pages, local server, any CDN)
+
+For zero-server deployments, switch to `adapter-static`. The proxy route will not exist (the app is pure HTML/CSS/JS), so `callAI` automatically falls back to direct browser-to-provider fetch calls.
+
+**Step 1 — Install the static adapter:**
+
+```bash
+npm install -D @sveltejs/adapter-static
+```
+
+**Step 2 — Update `svelte.config.js`:**
+
+```js
+import adapter from '@sveltejs/adapter-static';
+
+export default {
+  kit: {
+    adapter: adapter({
+      fallback: 'index.html'   // enables SPA routing
+    })
+  }
+};
+```
+
+**Step 3 — Build and deploy the `build/` folder:**
+
+```bash
+npm run build   # outputs to build/
+```
+
+Upload the `build/` directory to GitHub Pages, Cloudflare Pages (static), or serve it locally with any static file server.
+
+> **Note:** In static mode, API keys are sent directly from the browser to the AI provider. All major providers (OpenAI, Anthropic via OpenRouter, Ollama) support CORS for browser-direct requests. Keys remain local — they are never sent to any server you operate.
 
 ---
 
