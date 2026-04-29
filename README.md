@@ -170,7 +170,7 @@ I realised the quality of the other stories were high, but I wanted to rewrite t
 
 In the webpage, you can import this story with versions and see the prompts and chat I had to look at the story and work out a rewrite plan.
 
-[Download Starter Story — Moon Dark Example](https://github.com/brianlmerritt/local-first-ai-editor/releases/download/v1.0/moon_dark_example_import.zip)
+[Download Starter Story — Moon Dark Example](https://github.com/brianlmerritt/local-first-ai-editor/releases/download/examples-v1/moon_dark_example_import.zip)
 
 ## 📝 License
 
