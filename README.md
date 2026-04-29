@@ -70,6 +70,8 @@ git checkout main
 npm run build   # outputs to build/
 ```
 
+Note this page is pushed up to github automatically using github actions and you can use it there [Test this out here](https://brianlmerritt.github.io/local-first-ai-editor/)
+
 Upload the `build/` directory to your static host of choice.
 
 > **Note:** API keys are sent directly from the browser to the AI provider. All supported providers (OpenAI, OpenRouter, Ollama) accept browser-direct requests. Keys are stored only in your browser's `localStorage` — they are never sent to any server you operate and are never exported in the settings.
