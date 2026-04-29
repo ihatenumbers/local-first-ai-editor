@@ -162,6 +162,16 @@ npm run format
 
 ---
 
+## Example story to import with AI reviews
+
+I wrote Moon Dark as a writing contest for [Reddit WritingWithAI](https://www.reddit.com/r/WritingWithAI/)
+
+I realised the quality of the other stories were high, but I wanted to rewrite this in my own voice rather than have so I built Local First AI Editor.
+
+In the webpage, you can import this story with versions and see the prompts and chat I had to look at the story and work out a rewrite plan.
+
+[Download Starter Story — Moon Dark Example](https://github.com/brianlmerritt/local-first-ai-editor/releases/download/v1.0/moon_dark_example_import.zip)
+
 ## 📝 License
 
 This project is licensed under the [MIT License](LICENSE).
