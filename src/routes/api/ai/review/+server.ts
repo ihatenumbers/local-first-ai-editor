@@ -4,7 +4,7 @@ import type { RequestEvent } from './$types';
 export async function POST({ request, fetch }: RequestEvent) {
 	try {
 		const body = await request.json();
-		const { baseUrl, apiKey, providerType, model, systemPrompt, userPrompt, messages, responseFormat } = body;
+		const { baseUrl, apiKey, providerType, model, systemPrompt, userPrompt, messages, responseFormat, temperature, maxTokens } = body;
 
 		// messages[] is used for multi-turn chat; userPrompt is used for single-turn lint/todo
 		if (!baseUrl || !model || !systemPrompt || (!userPrompt && !messages)) {
@@ -32,7 +32,8 @@ export async function POST({ request, fetch }: RequestEvent) {
 				model: model,
 				messages: chatMessages,
 				stream: true,
-				temperature: 0.3
+				temperature: temperature ?? 0.3,
+				max_tokens: maxTokens ?? undefined
 			};
 
 			// Only OpenAI API currently supports response_format strictly in all models,
@@ -57,8 +58,8 @@ export async function POST({ request, fetch }: RequestEvent) {
 				system: systemPrompt,
 				messages: anthropicMessages,
 				stream: true,
-				max_tokens: 4096,
-				temperature: 0.3
+				max_tokens: maxTokens ?? 4096,
+				temperature: temperature ?? 0.3
 			};
 			// Anthropic doesn't have an explicit JSON mode flag in the same way, but it works by prompting.
 		} else {

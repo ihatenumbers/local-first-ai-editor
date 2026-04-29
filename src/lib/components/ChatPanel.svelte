@@ -71,10 +71,12 @@
 
 		isGenerating = true;
 
+		const liveText = uiState.editorInstance?.getText() ?? undefined;
 		const systemPrompt = buildChatSystemPrompt(
 			CHAT_SYSTEM_PROMPT,
 			documentState.activeScene,
-			documentState.project
+			documentState.project,
+			liveText
 		);
 
 		// Build conversation history excluding the empty assistant placeholder at the end
@@ -100,7 +102,9 @@
 					model: tierConfig.modelId,
 					systemPrompt,
 					messages: historyMessages,
-					responseFormat: 'text'
+					responseFormat: 'text',
+					temperature: activeRecipe.temperature ?? 0.7,
+					maxTokens: activeRecipe.maxTokens ?? undefined
 				})
 			});
 

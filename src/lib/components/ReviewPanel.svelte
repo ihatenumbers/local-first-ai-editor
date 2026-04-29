@@ -136,7 +136,9 @@
 					model: tierConfig.modelId,
 					systemPrompt,
 					userPrompt,
-					responseFormat: recipe.outputFormat
+					responseFormat: recipe.outputFormat,
+					temperature: recipe.temperature ?? 0.3,
+					maxTokens: recipe.maxTokens ?? undefined
 				})
 			});
 
@@ -589,14 +591,50 @@
 						</div>
 
 						{#if expandedRecipes[recipe.id] && recipe.outputFormat === 'chat'}
-							<div class="border-t border-zinc-200 bg-white p-3">
-								<label class="mb-1 block text-xs font-medium text-zinc-500">Chat Name</label>
-								<input
-									type="text"
-									bind:value={recipe.title}
-									class="w-full rounded border border-zinc-200 bg-zinc-50 p-2 text-sm font-semibold text-zinc-800 placeholder:text-zinc-400 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
-									placeholder="Chat Name"
-								/>
+							<div class="space-y-3 border-t border-zinc-200 bg-white p-3">
+								<div>
+									<label class="mb-1 block text-xs font-medium text-zinc-500">Chat Name</label>
+									<input
+										type="text"
+										bind:value={recipe.title}
+										class="w-full rounded border border-zinc-200 bg-zinc-50 p-2 text-sm font-semibold text-zinc-800 placeholder:text-zinc-400 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+										placeholder="Chat Name"
+									/>
+								</div>
+								<div class="space-y-1.5">
+									<div class="flex items-center justify-between text-[10px] font-medium text-zinc-600">
+										<span>Temperature</span>
+										<span class="font-mono tabular-nums">{(recipe.temperature ?? 0.3).toFixed(2)}</span>
+									</div>
+									<div class="flex items-center gap-2">
+										<span class="text-[9px] text-zinc-400">Precise</span>
+										<input
+											type="range"
+											min="0"
+											max="2"
+											step="0.05"
+											value={recipe.temperature ?? 0.3}
+											oninput={(e) => (recipe.temperature = parseFloat(e.currentTarget.value))}
+											class="h-1.5 flex-1 cursor-pointer accent-indigo-600"
+										/>
+										<span class="text-[9px] text-zinc-400">Creative</span>
+									</div>
+								</div>
+								<div class="flex items-center gap-2">
+									<label class="text-[10px] font-medium text-zinc-600 whitespace-nowrap">Max tokens</label>
+									<select
+										bind:value={recipe.maxTokens}
+										class="flex-1 rounded border border-zinc-200 bg-zinc-50 p-1 text-[10px] font-medium text-zinc-600 outline-none focus:ring-1 focus:ring-indigo-500"
+									>
+										<option value={undefined}>Model default</option>
+										<option value={512}>512 — Short</option>
+										<option value={1024}>1 024 — Medium</option>
+										<option value={2048}>2 048 — Standard</option>
+										<option value={4096}>4 096 — Long</option>
+										<option value={8192}>8 192 — Very Long</option>
+										<option value={16384}>16 384 — Maximum</option>
+									</select>
+								</div>
 							</div>
 						{:else if expandedRecipes[recipe.id]}
 							<div class="space-y-3 border-t border-zinc-200 bg-white p-3">
@@ -640,6 +678,40 @@
 										<option value="fast">Tier: Fast</option>
 										<option value="balanced">Tier: Balanced</option>
 										<option value="deep">Tier: Deep</option>
+									</select>
+								</div>
+								<div class="space-y-1.5">
+									<div class="flex items-center justify-between text-[10px] font-medium text-zinc-600">
+										<span>Temperature</span>
+										<span class="font-mono tabular-nums">{(recipe.temperature ?? 0.3).toFixed(2)}</span>
+									</div>
+									<div class="flex items-center gap-2">
+										<span class="text-[9px] text-zinc-400">Precise</span>
+										<input
+											type="range"
+											min="0"
+											max="2"
+											step="0.05"
+											value={recipe.temperature ?? 0.3}
+											oninput={(e) => (recipe.temperature = parseFloat(e.currentTarget.value))}
+											class="h-1.5 flex-1 cursor-pointer accent-indigo-600"
+										/>
+										<span class="text-[9px] text-zinc-400">Creative</span>
+									</div>
+								</div>
+								<div class="flex items-center gap-2">
+									<label class="text-[10px] font-medium text-zinc-600 whitespace-nowrap">Max tokens</label>
+									<select
+										bind:value={recipe.maxTokens}
+										class="flex-1 rounded border border-zinc-200 bg-zinc-50 p-1 text-[10px] font-medium text-zinc-600 outline-none focus:ring-1 focus:ring-indigo-500"
+									>
+										<option value={undefined}>Model default</option>
+										<option value={512}>512 — Short</option>
+										<option value={1024}>1 024 — Medium</option>
+										<option value={2048}>2 048 — Standard</option>
+										<option value={4096}>4 096 — Long</option>
+										<option value={8192}>8 192 — Very Long</option>
+										<option value={16384}>16 384 — Maximum</option>
 									</select>
 								</div>
 								{#if recipe.outputFormat === 'lints'}

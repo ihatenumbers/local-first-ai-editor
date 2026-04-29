@@ -27,6 +27,8 @@ export interface ReviewRecipe {
 	tier: 'fast' | 'balanced' | 'deep';
 	outputFormat: 'chat' | 'lints' | 'todos';
 	color?: string;
+	temperature?: number;
+	maxTokens?: number;
 	feedback?: string;
 	isGenerating?: boolean;
 	chatHistory?: ChatMessage[];

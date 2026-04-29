@@ -105,10 +105,10 @@ Connecting the AI's thoughts back to the specific words in the editor.
   - [x] Review nested scrollbar issues between the Scene ToDos area and the main panel.
   - [x] Ensure Scene ToDos preserve their assigned background colors when copied from lints and implement missing drag-and-drop.
   - [x] Add ability for ToDos to highlight any selected text and associate that with the ToDo - will will use a light gray background for ToDos with selected text (but if copied from lint then they keep their existing colour)
-- [ ] **AI Chat Panel:** Implement a new Far Right Panel "AI Chat" and implement a conversational system. Connect ToDos and Lints to the chat panel, e.g. each of these will have the potential to their own conversation record
+- [x] **AI Chat Panel:** Implement a new Far Right Panel "AI Chat" and implement a conversational system. Connect ToDos and Lints to the chat panel, e.g. each of these will have the potential to their own conversation record
 - [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
 - [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (e.g., using `prosemirror-multi-editor-diff` or Tiptap Snapshots).
 - [ ] **WebGPU / Local Browser AI:** Integrate WebLLM or Transformers.js to support fully local model execution.
-- [ ] **Complex Recipe Builder UI:** Build a graphical (node-based or slider-based) UI for constructing AI prompts and recipes.
+- [x] **Complex Recipe Builder UI:** Build a graphical (node-based or slider-based) UI for constructing AI prompts and recipes.
 - [ ] **File System Access API:** Enable saving and loading folders and physical `.md` files directly to and from the hard drive.
 - [ ] **Beta Release:** Configure build pipelines and publish the compiled application as a Beta Test.

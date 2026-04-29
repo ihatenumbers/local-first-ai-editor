@@ -3,7 +3,7 @@ import type { Scene, Project, ContextItem, ReviewRecipe } from '$lib/state/docum
 /**
  * Builds the system prompt for a Chat recipe, injecting scene text and context board.
  */
-export function buildChatSystemPrompt(basePrompt: string, scene: Scene, _project: Project): string {
+export function buildChatSystemPrompt(basePrompt: string, scene: Scene, _project: Project, liveText?: string): string {
 	let prompt = basePrompt + '\n\n';
 
 	if (scene.objectivesText?.trim()) {
@@ -17,13 +17,14 @@ export function buildChatSystemPrompt(basePrompt: string, scene: Scene, _project
 		});
 	}
 
-	const sceneText =
+	const sceneText = liveText ?? (
 		typeof window !== 'undefined'
 			? new DOMParser().parseFromString(
 					scene.content.replace(/<(p|div|br)/gi, '\n<$1'),
 					'text/html'
 				).body.textContent
-			: scene.content.replace(/<[^>]+>/g, '\n');
+			: scene.content.replace(/<[^>]+>/g, '\n')
+	);
 
 	if (sceneText?.trim()) {
 		prompt += `### CURRENT SCENE TEXT\n${sceneText.trim()}\n`;
