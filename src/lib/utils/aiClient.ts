@@ -15,6 +15,8 @@
  * ChatPanel) require no changes beyond swapping `fetch(...)` for `callAI(...)`.
  */
 
+import { base } from '$app/paths';
+
 export interface AICallParams {
 	baseUrl: string;
 	apiKey: string;
@@ -134,16 +136,17 @@ export async function callAI(params: AICallParams): Promise<Response> {
 		return callDirect(params);
 	}
 
-	const res = await fetch('/api/ai/review', {
+	const res = await fetch(`${base}/api/ai/review`, {
 		method: 'POST',
 		headers: { 'Content-Type': 'application/json' },
 		body: JSON.stringify(params)
 	});
 
 	// On static hosting the SPA fallback returns index.html (200, text/html)
-	// for any unknown route. Detect that and treat it as "no proxy".
+	// for any unknown route. GitHub Pages returns 405 for POST to unknown routes.
+	// Detect either and treat as "no proxy available".
 	const contentType = res.headers.get('content-type') || '';
-	if (res.status === 404 || contentType.includes('text/html')) {
+	if (res.status === 404 || res.status === 405 || contentType.includes('text/html')) {
 		proxyAvailable = false;
 		return callDirect(params);
 	}
