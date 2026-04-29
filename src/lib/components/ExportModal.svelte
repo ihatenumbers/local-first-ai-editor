@@ -14,11 +14,12 @@
 		scene: false,
 		recipes: true,
 		todos: true,
+		context: true,
 		versions: false,
 		historyChat: true,
 		historyLint: true,
 		historyTodo: true,
-		settings: false
+		settings: true
 	});
 
 	function close() {
@@ -60,7 +61,8 @@
 			label: 'Data',
 			items: [
 				{ key: 'recipes', label: 'Recipes', desc: "/Recipe/ — active version's recipe configs (prompt, tier, temp)" },
-				{ key: 'todos', label: 'Todos', desc: '/Todo/ — open and ignored todos per scene' }
+				{ key: 'todos', label: 'Todos', desc: '/Todo/ — open and ignored todos per scene' },
+				{ key: 'context', label: 'Context Board', desc: '/Context/ — context items for active version of each scene' }
 			]
 		},
 		{

@@ -183,6 +183,7 @@ export interface ExportOptions {
 	scene: boolean;
 	recipes: boolean;
 	todos: boolean;
+	context: boolean;
 	versions: boolean;
 	historyChat: boolean;
 	historyLint: boolean;
@@ -265,6 +266,26 @@ export async function exportToFolder(
 					scene: scene.sceneNumber,
 					exported: now
 				}) + JSON.stringify(recipes, null, 2)
+			);
+		}
+
+		// ── Context (/Context/ch1sc1.json) ──────────────────────────────────
+		if (options.context && activeVersion && (activeVersion.contextItems.length || activeVersion.objectivesText)) {
+			await writeFile(
+				root,
+				['Context'],
+				`${sk}.json`,
+				fm({
+					type: 'context',
+					chapter: scene.chapterNumber,
+					scene: scene.sceneNumber,
+					exported: now
+				}) +
+					JSON.stringify(
+						{ objectivesText: activeVersion.objectivesText, contextItems: activeVersion.contextItems },
+						null,
+						2
+					)
 			);
 		}
 
@@ -393,15 +414,24 @@ export async function exportToFolder(
 
 	// ── Settings (/Settings/settings.json) ───────────────────────────────────
 	if (options.settings) {
+		const obfuscateKey = (key: string) => {
+			if (!key) return '';
+			if (key.length <= 8) return '****';
+			return key.slice(0, 4) + '****';
+		};
+		const safeProfiles = settings.profiles.map((p) => ({
+			...p,
+			apiKey: obfuscateKey(p.apiKey)
+		}));
 		await writeFile(
 			root,
 			['Settings'],
 			'settings.json',
 			JSON.stringify(
 				{
-					_note: 'API keys are included. Keep this file secure.',
+					_note: 'API keys are obfuscated. Re-enter them after import.',
 					exported: now,
-					profiles: settings.profiles,
+					profiles: safeProfiles,
 					tiers: settings.tiers,
 					debugAiCalls: settings.debugAiCalls
 				},

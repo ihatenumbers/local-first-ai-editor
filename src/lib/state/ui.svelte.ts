@@ -5,6 +5,7 @@ export class UIState {
 	showSettings = $state(false);
 	showVersionsPanel = $state(false);
 	showExportModal = $state(false);
+	showImportModal = $state(false);
 
 	reviewPanelWidth = $state(320);
 	chatPanelWidth = $state(340);

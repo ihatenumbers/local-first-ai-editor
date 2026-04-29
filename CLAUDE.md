@@ -26,6 +26,14 @@ npm run check        # svelte-check type checking
 
 Do not change github branches, do not push or pull up to github.  Use git for diffs etc but not to change the remote.
 
+## Installing packages
+
+This project runs inside WSL. Claude Code cannot reliably invoke the WSL npm from Windows. When a new package needs installing, tell the developer to run the command in their WSL terminal rather than attempting it via a tool call. Example:
+
+```bash
+cd ~/dev/writing/offline-ai-reviewer && npm install <package>
+```
+
 ## Working with the developer
 
 Once the fix or development steps are completed, wait for the developer to test the fix.  The developer will then push the changes up to the git repository and create a new branch.  If things go bad, the developer will git stash and we can start again.

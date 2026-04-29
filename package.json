@@ -60,6 +60,7 @@
 		"@tiptap/pm": "^3.22.4",
 		"@tiptap/starter-kit": "^3.22.4",
 		"lucide-svelte": "^1.0.1",
+		"marked": "^18.0.2",
 		"svelte-dnd-action": "^0.9.69",
 		"y-indexeddb": "^9.0.12",
 		"yjs": "^13.6.30"

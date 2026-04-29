@@ -11,6 +11,7 @@
 	import Tiptap from '$lib/components/Tiptap.svelte';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
 	import ExportModal from '$lib/components/ExportModal.svelte';
+	import ImportModal from '$lib/components/ImportModal.svelte';
 </script>
 
 <main class="flex h-screen w-full overflow-hidden bg-zinc-50 font-sans text-zinc-900">
@@ -58,5 +59,9 @@
 
 	{#if uiState.showExportModal}
 		<ExportModal />
+	{/if}
+
+	{#if uiState.showImportModal}
+		<ImportModal />
 	{/if}
 </main>
