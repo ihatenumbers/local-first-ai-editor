@@ -15,7 +15,11 @@ It operates entirely client-side without a backend runtime server. It utilizes l
 
 ---
 
-## 🚀 Getting Started (Development)
+## Getting Started (for Users)
+
+[DOCUMENTATION](https://github.com/brianlmerritt/local-first-ai-editor/blob/main/DOCUMENTATION.md)
+
+##  Getting Started (Development)
 
 ### Prerequisites
 
@@ -100,19 +104,27 @@ npm run format
 
 ---
 
-## 🗺 Phase 2 Roadmap (Beta)
+## 🗺 Phase 2 Roadmap (Beta) — Complete
 
-- [x] **Enhance Editor:** Enhance the editor controls to include justification, strike-through, formatting, text highlights, task lists, undo/redo, and tables.
+- [x] **Enhance Editor:** Justification, strike-through, code text, text highlights, task lists, undo/redo, and tables via Tiptap.
 - [x] **AI Recipes & ToDos UX:** Recipe-specific highlight colors, drag-and-drop reordering, scrollbar fixes, and background pattern tracking from Lint to ToDo.
 - [x] **Selection-based ToDos:** Dynamic binding of selected editor text to manual ToDos with gray annotations.
+- [x] **AI Chat Panel:** Conversational AI panel with per-recipe chat history, scene text context, and streaming responses.
+- [x] **Complex Recipe Builder UI:** Temperature slider, max tokens selector, and output format controls per recipe.
+- [x] **Versioning:** Full scene versioning system — named versions, Final Output marker, clone/delete, per-version recipes/todos/context/chat history.
+- [x] **Export (File System Access API):** Export story, scenes, versions, recipes, todos, context board, chat/lint/todo histories, and settings to structured folders with YAML frontmatter. API keys obfuscated on export.
+- [x] **Import (File System Access API):** Import from an exported folder in Overwrite or Start Fresh mode. Folder scan shows findings per category; per-item checkboxes control what is imported.
+
+---
+
+## 🗺 Phase 3 Roadmap
+
+- [ ] **Multi-story support:** Add ability to open, switch between, and manage multiple independent projects.
 - [ ] **Collapsible Text Output:** Toggle visibility for raw output on "Text" recipes in the review panel.
-- [ ] **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement an interactive conversational AI system.
-- [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
-- [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
-- [ ] **WebGPU / Local Browser AI:** Support downloading 4GB+ quantized models via WebLLM or Transformers.js for fully local offline AI generation.
-- [ ] **Complex Recipe Builder UI:** Create a node-based or slider-based UI for custom prompts.
-- [ ] **Full File System Access API Integration:** Export and sync to physical `.md` files on the user's hard drive.
-- [ ] **Beta Release:** Build and publish the application for public Beta Testing.
+- [ ] **In-Editor AI:** Adding `/` commands into the editor (e.g. `/reword`, `/check_story`).
+- [ ] **Inline Diff/Tracked Changes:** Inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
+- [ ] **WebGPU / Local Browser AI:** Support downloading quantized models via WebLLM or Transformers.js for fully local offline AI generation.
+- [ ] **Beta Release:** Configure build pipelines and publish the compiled application for public Beta Testing.
 
 ---
 

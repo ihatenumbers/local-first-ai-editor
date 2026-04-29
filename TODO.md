@@ -91,24 +91,30 @@ Connecting the AI's thoughts back to the specific words in the editor.
 
 ---
 
-## Still ToDo
+## Phase 2: Beta Features — Complete
 
-### Phase 2: Beta Features
-
-- [x] **Enhance Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
-- [x] **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop, and add a highlight colour feature for lint so that each recipe can have a different hightlight colour.
-- [ ] **UX Design Review (Review Recipes Panel):**
+- [x] **Enhance Editor:** Justification, strike-through, code text, text highlights, task lists, undo/redo, tables.
+- [x] **AI Recipes and Todo:** Drag-and-drop reordering, recipe highlight colours, scrollbar fixes.
+- [x] **UX Design Review (Review Recipes Panel):**
   - [x] Discuss and agree on a UX design for the Review Recipes Panel.
-  - [ ] Keep "Text" recipes but make the chat output collapsable
   - [x] Fix missing scrollbars on text output cards and lint output cards.
   - [x] Review drag-and-drop mechanics vs text selection on lint cards.
   - [x] Review nested scrollbar issues between the Scene ToDos area and the main panel.
   - [x] Ensure Scene ToDos preserve their assigned background colors when copied from lints and implement missing drag-and-drop.
-  - [x] Add ability for ToDos to highlight any selected text and associate that with the ToDo - will will use a light gray background for ToDos with selected text (but if copied from lint then they keep their existing colour)
-- [x] **AI Chat Panel:** Implement a new Far Right Panel "AI Chat" and implement a conversational system. Connect ToDos and Lints to the chat panel, e.g. each of these will have the potential to their own conversation record
-- [ ] **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
-- [ ] **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (e.g., using `prosemirror-multi-editor-diff` or Tiptap Snapshots).
-- [ ] **WebGPU / Local Browser AI:** Integrate WebLLM or Transformers.js to support fully local model execution.
-- [x] **Complex Recipe Builder UI:** Build a graphical (node-based or slider-based) UI for constructing AI prompts and recipes.
-- [ ] **File System Access API:** Enable saving and loading folders and physical `.md` files directly to and from the hard drive.
-- [ ] **Beta Release:** Configure build pipelines and publish the compiled application as a Beta Test.
+  - [x] Add ability for ToDos to highlight any selected text and associate that with the ToDo.
+- [x] **AI Chat Panel:** Conversational panel per recipe with streaming, scene text context, per-recipe chat history persisted per version.
+- [x] **Complex Recipe Builder UI:** Temperature slider, max tokens selector, output format controls per recipe.
+- [x] **Versioning:** Named scene versions, Final Output marker, clone/delete, per-version recipes/todos/context/chat history. Version strip panel in header.
+- [x] **Export (File System Access API):** Structured folder export with YAML frontmatter — story, scene, versions, recipes, todos, context board (objectives + items), chat/lint/todo histories, settings. API keys obfuscated.
+- [x] **Import (File System Access API):** Folder scan → findings → checkboxes → Overwrite or Start Fresh import. Reconstructs all data types including Yjs text via `marked`.
+
+---
+
+## Phase 3: Next Features
+
+- [ ] **Multi-story support:** Add ability to edit multiple stories — open, switch between, and manage multiple independent projects.
+- [ ] **Collapsible Text Output:** Toggle visibility for raw output on "Text" recipe cards in the review panel.
+- [ ] **In-Editor AI:** Slash commands inside the editor (e.g. `/reword`, `/check_story`).
+- [ ] **Inline Diff/Tracked Changes:** Inline rewrites and diff views (e.g. `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly to the manuscript.
+- [ ] **WebGPU / Local Browser AI:** Download and run quantized models (WebLLM or Transformers.js) for fully offline AI generation.
+- [ ] **Beta Release:** Configure static build pipeline and publish for public Beta Testing.

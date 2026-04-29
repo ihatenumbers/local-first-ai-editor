@@ -4,8 +4,8 @@ Here is the Product Requirements Document (PRD) for the Phase 1 MVP. This acts a
 
 # Product Requirements Document (PRD)
 
-**Project:** Offline AI Writer & Semantic Reviewer (Phase 2 Beta)
-**Date:** April 27, 2026
+**Project:** Offline AI Writer & Semantic Reviewer (Phase 3)
+**Date:** April 29, 2026
 
 ## 1. Executive Summary
 
@@ -60,21 +60,23 @@ The application will utilize an ultrawide-optimized 4-column layout, which grace
 - **Zero Server Runtime:** The application must compile to static HTML/CSS/JS. There will be no Node.js server required at runtime.
 - **Privacy:** The user's text must never leave their local machine unless they explicitly trigger an AI review, at which point it is sent only to the API endpoint they configured.
 
-## 6. Phase 2 Requirements
+## 6. Phase 2 Requirements — Delivered
 
-- **Enhanced Editor:** Enhance the editor controls to include justification, strike through, code text, text highlight, task lists, undo and redo buttons, create tables etc implemented with Tiptap.
-- **AI Recipies and Todo:** Allow lint tasks and todo jobs to be reordered with drag and drop.
-- **AI Chat Panel:** Migrate "Text" recipes to a new Far Right Panel "AI Chat" and implement a conversational system.
-- **In Editor AI:** Adding / commands or similar into the editor e.g. /reword /check_story.
-- **Inline Diff/Tracked Changes:** Implement actual inline rewrites and diff views (using tools like `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly.
-- **WebGPU / Local Browser AI:** Support downloading 4GB+ quantized models via WebLLM or Transformers.js for fully local offline AI generation.
-- **Complex Recipe Builder UI:** Create a node-based or slider-based UI for custom prompts.
-- **Full File System Access API Integration:** Export and sync to physical `.md` files on the user's hard drive.
-- **UX & UI Iteration (Review Recipes Panel):**
-  - Address scrolling boundaries vs long text outputs (remove nested or conflicting scrollbars).
-  - Modify lint cards to incorporate colored backgrounds that match their respective text highlights.
-  - Distinguish text selection areas from drag-and-drop handles so users can copy text out of a lint/todo card without triggering a drag event.
-  - Update "Scene ToDos" to inherit their source colors and implement drag-and-drop sorting capabilities, while streamlining their success messaging.
-- **Beta Release:** Build and publish the application for public Beta Testing.
+- **Enhanced Editor:** Justification, strike-through, code text, text highlights, task lists, undo/redo, tables.
+- **AI Recipes & ToDo UX:** Drag-and-drop reordering, recipe highlight colors, scrollbar fixes, selection-based ToDos with gray annotations.
+- **AI Chat Panel:** Conversational panel per recipe with streaming responses, scene text context, and per-recipe chat history persisted per version.
+- **Complex Recipe Builder:** Temperature slider, max tokens selector, output format selection (lints / todos / chat).
+- **Versioning:** Full per-scene versioning — named versions, Final Output marker, clone, delete, per-version recipes/todos/context board/chat history. Version panel in header strip.
+- **Export:** File System Access API export to structured folders with YAML-frontmatted files. Covers story text, individual scenes, all versions, recipes, todos, context board (objectives + items), chat/lint/todo histories, and settings. API keys obfuscated on export.
+- **Import:** Folder scan → findings summary → per-category checkboxes → import in Overwrite or Start Fresh mode. Reconstructs all data types including Yjs text content (markdown → Yjs via `marked` + DOMParser).
+
+## 7. Phase 3 Requirements
+
+- **Multi-story support:** Add ability to open, switch between, and manage multiple independent projects.
+- **Collapsible Text Output:** Toggle visibility for raw output on "Text" recipe cards in the review panel.
+- **In-Editor AI:** Slash commands inside the editor (e.g. `/reword`, `/check_story`).
+- **Inline Diff/Tracked Changes:** Inline rewrites and diff views (e.g. `prosemirror-multi-editor-diff` or Tiptap Snapshots) for applying AI suggestions directly to the manuscript.
+- **WebGPU / Local Browser AI:** Download and run quantized models (WebLLM or Transformers.js) for fully offline AI generation.
+- **Beta Release:** Configure static build pipeline and publish for public Beta Testing.
 
 ---
