@@ -441,9 +441,13 @@
 				prompt: '',
 				isActive: true,
 				tier: 'balanced',
-				outputFormat: 'text'
+				outputFormat: 'lints'
 			});
 		}
+	}
+
+	function toggleChatRecipe(recipeId: string) {
+		uiState.activeChatRecipeId = uiState.activeChatRecipeId === recipeId ? null : recipeId;
 	}
 	function deleteRecipe(id: string) {
 		if (documentState.activeScene)
@@ -495,8 +499,11 @@
 				onfinalize={handleDndFinalizeRecipes}
 			>
 				{#each documentState.activeScene?.reviewRecipes || [] as recipe (recipe.id)}
+					{@const isActiveChat = recipe.outputFormat === 'chat' && uiState.activeChatRecipeId === recipe.id}
 					<div
-						class="group overflow-hidden rounded-md border border-zinc-200 bg-white shadow-sm transition-colors hover:border-indigo-300"
+						class="group overflow-hidden rounded-md border shadow-sm transition-colors {isActiveChat
+							? 'border-indigo-400 bg-indigo-50/30'
+							: 'border-zinc-200 bg-white hover:border-indigo-300'}"
 					>
 						<div class="flex items-center justify-between bg-zinc-50/50 p-3">
 							<div class="flex flex-1 items-center gap-2">
@@ -505,54 +512,72 @@
 									tabindex="0"
 									aria-label="Drag Recipe"
 									class="cursor-grab p-1 text-zinc-400 hover:text-zinc-600 active:cursor-grabbing"
-									onmouseenter={() => {
-										dragDisabledRecipes = false;
-									}}
-									onmouseleave={() => {
-										dragDisabledRecipes = true;
-									}}
-									ontouchstart={() => {
-										dragDisabledRecipes = false;
-									}}
-									ontouchend={() => {
-										dragDisabledRecipes = true;
-									}}
+									onmouseenter={() => { dragDisabledRecipes = false; }}
+									onmouseleave={() => { dragDisabledRecipes = true; }}
+									ontouchstart={() => { dragDisabledRecipes = false; }}
+									ontouchend={() => { dragDisabledRecipes = true; }}
 								>
 									<GripVertical size={16} />
 								</div>
-								<button
-									class="text-zinc-400 hover:text-indigo-600"
-									onclick={() => (expandedRecipes[recipe.id] = !expandedRecipes[recipe.id])}
-								>
-									{#if expandedRecipes[recipe.id]}
-										<ChevronDown size={16} />
-									{:else}
-										<ChevronRight size={16} />
-									{/if}
-								</button>
-								<input
-									type="checkbox"
-									bind:checked={recipe.isActive}
-									class="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500"
-								/>
-								<input
-									type="text"
-									bind:value={recipe.title}
-									class="flex-1 truncate border-none bg-transparent p-0 text-sm font-semibold text-zinc-800 placeholder:text-zinc-400 focus:ring-0 focus:outline-none"
-									placeholder="Recipe Title"
-								/>
+								{#if recipe.outputFormat === 'chat'}
+									<!-- Chat recipes: chevron expands rename field, icon toggles panel -->
+									<button
+										class="text-zinc-400 hover:text-indigo-600"
+										onclick={() => (expandedRecipes[recipe.id] = !expandedRecipes[recipe.id])}
+									>
+										{#if expandedRecipes[recipe.id]}
+											<ChevronDown size={16} />
+										{:else}
+											<ChevronRight size={16} />
+										{/if}
+									</button>
+									<button
+										class="p-1 {isActiveChat ? 'text-indigo-600' : 'text-zinc-400 hover:text-indigo-600'}"
+										onclick={() => toggleChatRecipe(recipe.id)}
+										title={isActiveChat ? 'Close chat panel' : 'Open chat panel'}
+									>
+										<MessageSquare size={16} />
+									</button>
+									<span class="flex-1 truncate text-sm font-semibold {isActiveChat ? 'text-indigo-700' : 'text-zinc-800'}">
+										{recipe.title || 'Untitled Chat'}
+									</span>
+								{:else}
+									<button
+										class="text-zinc-400 hover:text-indigo-600"
+										onclick={() => (expandedRecipes[recipe.id] = !expandedRecipes[recipe.id])}
+									>
+										{#if expandedRecipes[recipe.id]}
+											<ChevronDown size={16} />
+										{:else}
+											<ChevronRight size={16} />
+										{/if}
+									</button>
+									<input
+										type="checkbox"
+										bind:checked={recipe.isActive}
+										class="h-4 w-4 rounded border-zinc-300 text-indigo-600 focus:ring-indigo-500"
+									/>
+									<input
+										type="text"
+										bind:value={recipe.title}
+										class="flex-1 truncate border-none bg-transparent p-0 text-sm font-semibold text-zinc-800 placeholder:text-zinc-400 focus:ring-0 focus:outline-none"
+										placeholder="Recipe Title"
+									/>
+								{/if}
 							</div>
 							<div class="flex items-center gap-1">
-								<button
-									class="p-1 text-zinc-400 transition-colors hover:text-indigo-600 disabled:opacity-50 {recipe.isGenerating
-										? 'animate-pulse text-indigo-600'
-										: ''}"
-									title={recipe.isGenerating ? 'Analyzing...' : 'Run Analysis'}
-									onclick={() => runRecipe(recipe)}
-									disabled={recipe.isGenerating}
-								>
-									<Play size={14} class={recipe.isGenerating ? 'fill-indigo-600' : ''} />
-								</button>
+								{#if recipe.outputFormat !== 'chat'}
+									<button
+										class="p-1 text-zinc-400 transition-colors hover:text-indigo-600 disabled:opacity-50 {recipe.isGenerating
+											? 'animate-pulse text-indigo-600'
+											: ''}"
+										title={recipe.isGenerating ? 'Analyzing...' : 'Run Analysis'}
+										onclick={() => runRecipe(recipe)}
+										disabled={recipe.isGenerating}
+									>
+										<Play size={14} class={recipe.isGenerating ? 'fill-indigo-600' : ''} />
+									</button>
+								{/if}
 								<button
 									class="p-1 text-zinc-300 opacity-0 transition-colors group-hover:opacity-100 hover:text-red-500"
 									title="Delete Recipe"
@@ -563,19 +588,29 @@
 							</div>
 						</div>
 
-						{#if expandedRecipes[recipe.id]}
+						{#if expandedRecipes[recipe.id] && recipe.outputFormat === 'chat'}
+							<div class="border-t border-zinc-200 bg-white p-3">
+								<label class="mb-1 block text-xs font-medium text-zinc-500">Chat Name</label>
+								<input
+									type="text"
+									bind:value={recipe.title}
+									class="w-full rounded border border-zinc-200 bg-zinc-50 p-2 text-sm font-semibold text-zinc-800 placeholder:text-zinc-400 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+									placeholder="Chat Name"
+								/>
+							</div>
+						{:else if expandedRecipes[recipe.id]}
 							<div class="space-y-3 border-t border-zinc-200 bg-white p-3">
 								<div class="flex items-center justify-between">
 									<div class="flex rounded-md shadow-sm">
 										<button
 											class="rounded-l-md border border-r-0 px-2 py-1 text-[10px] font-medium {recipe.outputFormat ===
-											'text'
+											'chat'
 												? 'border-indigo-200 bg-indigo-50 text-indigo-700'
 												: 'border-zinc-200 bg-white text-zinc-500 hover:bg-zinc-50'}"
-											title="Free-text feedback in sidebar"
-											onclick={() => (recipe.outputFormat = 'text')}
+											title="Conversational AI chat panel"
+											onclick={() => (recipe.outputFormat = 'chat')}
 										>
-											<MessageSquare size={12} class="mr-1 inline" /> Text
+											<MessageSquare size={12} class="mr-1 inline" /> Chat
 										</button>
 										<button
 											class="border-t border-b border-l px-2 py-1 text-[10px] font-medium {recipe.outputFormat ===

@@ -3,6 +3,7 @@
 		PanelLeft,
 		PanelRight,
 		PanelsLeftRight,
+		MessageSquare,
 		Settings,
 		Save,
 		RotateCcw,
@@ -75,6 +76,16 @@
 			title="Toggle Review Recipes & ToDos"
 		>
 			<PanelsLeftRight size={18} />
+		</button>
+
+		<button
+			class="rounded p-1.5 transition-colors hover:bg-zinc-100 {uiState.activeChatRecipeId
+				? 'text-indigo-600'
+				: 'text-zinc-400'}"
+			onclick={() => (uiState.activeChatRecipeId = null)}
+			title="Close AI Chat Panel"
+		>
+			<MessageSquare size={18} />
 		</button>
 
 		<button

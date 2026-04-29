@@ -1,6 +1,38 @@
 import type { Scene, Project, ContextItem, ReviewRecipe } from '$lib/state/document.svelte';
 
 /**
+ * Builds the system prompt for a Chat recipe, injecting scene text and context board.
+ */
+export function buildChatSystemPrompt(basePrompt: string, scene: Scene, _project: Project): string {
+	let prompt = basePrompt + '\n\n';
+
+	if (scene.objectivesText?.trim()) {
+		prompt += `### WRITING OBJECTIVES FOR THIS SCENE\n${scene.objectivesText.trim()}\n\n`;
+	}
+
+	if (scene.contextItems?.length > 0) {
+		prompt += `### BACKGROUND CONTEXT (CHARACTERS / LOCATIONS / LORE)\n`;
+		scene.contextItems.forEach((item: ContextItem) => {
+			prompt += `**${item.title}**\n${item.content}\n\n`;
+		});
+	}
+
+	const sceneText =
+		typeof window !== 'undefined'
+			? new DOMParser().parseFromString(
+					scene.content.replace(/<(p|div|br)/gi, '\n<$1'),
+					'text/html'
+				).body.textContent
+			: scene.content.replace(/<[^>]+>/g, '\n');
+
+	if (sceneText?.trim()) {
+		prompt += `### CURRENT SCENE TEXT\n${sceneText.trim()}\n`;
+	}
+
+	return prompt;
+}
+
+/**
  * Strips HTML tags from the Editor's HTML output to get clean text for the LLM.
  * We do this safely using browser DOMParser if available.
  */

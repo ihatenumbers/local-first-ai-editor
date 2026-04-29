@@ -234,6 +234,7 @@
 							<input
 								id="key-{profile.id}"
 								type="password"
+								autocomplete="new-password"
 								bind:value={profile.apiKey}
 								placeholder={profile.type === 'local' ? 'Not needed for Local' : 'sk-...'}
 								class="w-full rounded border border-zinc-300 p-2 font-mono text-sm focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500 focus:outline-none"

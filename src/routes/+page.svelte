@@ -6,6 +6,7 @@
 	import Header from '$lib/components/Header.svelte';
 	import ExplorerPanel from '$lib/components/ExplorerPanel.svelte';
 	import ReviewPanel from '$lib/components/ReviewPanel.svelte';
+	import ChatPanel from '$lib/components/ChatPanel.svelte';
 	import ContextPanel from '$lib/components/ContextPanel.svelte';
 	import Tiptap from '$lib/components/Tiptap.svelte';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
@@ -31,6 +32,10 @@
 
 		{#if uiState.showReviewPanel}
 			<ReviewPanel />
+		{/if}
+
+		{#if uiState.activeChatRecipeId}
+			<ChatPanel />
 		{/if}
 
 		{#if uiState.showContextBoard}

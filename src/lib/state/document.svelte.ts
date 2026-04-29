@@ -12,16 +12,24 @@ export interface Annotation {
 	isIgnored?: boolean;
 }
 
+export interface ChatMessage {
+	id: string;
+	role: 'user' | 'assistant';
+	content: string;
+	timestamp: number;
+}
+
 export interface ReviewRecipe {
 	id: string;
 	title: string;
 	prompt: string;
 	isActive: boolean;
 	tier: 'fast' | 'balanced' | 'deep';
-	outputFormat: 'text' | 'lints' | 'todos';
+	outputFormat: 'chat' | 'lints' | 'todos';
 	color?: string;
 	feedback?: string;
 	isGenerating?: boolean;
+	chatHistory?: ChatMessage[];
 }
 
 export interface ContextItem {

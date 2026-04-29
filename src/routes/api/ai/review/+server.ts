@@ -4,9 +4,10 @@ import type { RequestEvent } from './$types';
 export async function POST({ request, fetch }: RequestEvent) {
 	try {
 		const body = await request.json();
-		const { baseUrl, apiKey, providerType, model, systemPrompt, userPrompt, responseFormat } = body;
+		const { baseUrl, apiKey, providerType, model, systemPrompt, userPrompt, messages, responseFormat } = body;
 
-		if (!baseUrl || !model || !systemPrompt || !userPrompt) {
+		// messages[] is used for multi-turn chat; userPrompt is used for single-turn lint/todo
+		if (!baseUrl || !model || !systemPrompt || (!userPrompt && !messages)) {
 			return json({ error: 'Missing required parameters' }, { status: 400 });
 		}
 
@@ -22,12 +23,14 @@ export async function POST({ request, fetch }: RequestEvent) {
 				headers['Authorization'] = `Bearer ${apiKey}`;
 			}
 
+			// Multi-turn chat passes a messages array; single-turn passes userPrompt
+			const chatMessages = messages
+				? [{ role: 'system', content: systemPrompt }, ...messages]
+				: [{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }];
+
 			upstreamBody = {
 				model: model,
-				messages: [
-					{ role: 'system', content: systemPrompt },
-					{ role: 'user', content: userPrompt }
-				],
+				messages: chatMessages,
 				stream: true,
 				temperature: 0.3
 			};
@@ -44,10 +47,15 @@ export async function POST({ request, fetch }: RequestEvent) {
 			}
 			headers['anthropic-version'] = '2023-06-01';
 
+			// Multi-turn chat passes a messages array; single-turn passes userPrompt
+			const anthropicMessages = messages
+				? messages
+				: [{ role: 'user', content: userPrompt }];
+
 			upstreamBody = {
 				model: model,
 				system: systemPrompt,
-				messages: [{ role: 'user', content: userPrompt }],
+				messages: anthropicMessages,
 				stream: true,
 				max_tokens: 4096,
 				temperature: 0.3

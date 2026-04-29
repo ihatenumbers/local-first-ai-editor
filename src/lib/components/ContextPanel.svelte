@@ -65,7 +65,7 @@
 			{#if documentState.activeScene}
 				<textarea
 					bind:value={documentState.activeScene.objectivesText}
-					class="h-24 w-full resize-none rounded-md border-zinc-300 bg-white p-2 text-sm shadow-sm focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+					class="h-24 w-full resize-y rounded-md border-zinc-300 bg-white p-2 text-sm shadow-sm focus:ring-1 focus:ring-indigo-500 focus:outline-none"
 					placeholder="Add your writing objectives here - when the scene or document is finished, what will it have achieved?"
 				></textarea>
 			{:else}
@@ -107,7 +107,7 @@
 						</div>
 						<textarea
 							bind:value={item.content}
-							class="h-20 w-full resize-none rounded-md border-zinc-200 bg-zinc-50 p-2 text-sm placeholder:text-zinc-400 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
+							class="h-20 w-full resize-y rounded-md border-zinc-200 bg-zinc-50 p-2 text-sm placeholder:text-zinc-400 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
 							placeholder="Enter context details..."
 						></textarea>
 					</div>
