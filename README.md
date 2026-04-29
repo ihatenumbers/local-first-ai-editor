@@ -49,63 +49,46 @@ npm run dev -- --open
 
 ## 🏗 Building for Production
 
+The app ships in two pre-configured branches. Check out the correct branch for your hosting target, then build — no manual config changes or package installs needed.
+
 ```bash
 npm run build
 npm run preview   # preview the build locally
 ```
 
-The app supports two deployment modes. The AI client (`aiClient.ts`) automatically detects which mode is active at runtime — no code changes needed between modes.
-
 ---
 
-### Mode 1 — Serverless Deployment (Vercel, Cloudflare Pages, Netlify)
+### Mode 1 — Pure Static Hosting · `main` branch
 
-This is the **default** configuration. The SvelteKit server route at `/api/ai/review` acts as a CORS proxy, forwarding AI requests on behalf of the browser. This is the recommended mode for public hosting.
+**Branch:** `main`  
+**Targets:** GitHub Pages, Cloudflare Pages (static), any CDN, local file server
 
-**No configuration changes required.** Push to Vercel, Cloudflare Pages, or Netlify and deploy normally. `adapter-auto` detects the platform and configures the correct serverless output.
-
-```bash
-# Example: Vercel
-npm run build   # adapter-auto outputs to .vercel/output
-```
-
-At runtime `callAI` will route through the proxy, keeping API keys out of browser network logs.
-
----
-
-### Mode 2 — Pure Static Hosting (GitHub Pages, local server, any CDN)
-
-For zero-server deployments, switch to `adapter-static`. The proxy route will not exist (the app is pure HTML/CSS/JS), so `callAI` automatically falls back to direct browser-to-provider fetch calls.
-
-**Step 1 — Install the static adapter:**
+The `main` branch uses `adapter-static` and outputs pure HTML/CSS/JS to `build/`. There is no server-side proxy; the AI client (`callAI`) calls the AI provider directly from the browser.
 
 ```bash
-npm install -D @sveltejs/adapter-static
-```
-
-**Step 2 — Update `svelte.config.js`:**
-
-```js
-import adapter from '@sveltejs/adapter-static';
-
-export default {
-  kit: {
-    adapter: adapter({
-      fallback: 'index.html'   // enables SPA routing
-    })
-  }
-};
-```
-
-**Step 3 — Build and deploy the `build/` folder:**
-
-```bash
+git checkout main
 npm run build   # outputs to build/
 ```
 
-Upload the `build/` directory to GitHub Pages, Cloudflare Pages (static), or serve it locally with any static file server.
+Upload the `build/` directory to your static host of choice.
 
-> **Note:** In static mode, API keys are sent directly from the browser to the AI provider. All major providers (OpenAI, Anthropic via OpenRouter, Ollama) support CORS for browser-direct requests. Keys remain local — they are never sent to any server you operate.
+> **Note:** API keys are sent directly from the browser to the AI provider. All supported providers (OpenAI, OpenRouter, Ollama) accept browser-direct requests. Keys are stored only in your browser's `localStorage` — they are never sent to any server you operate and are never exported in the settings.
+
+---
+
+### Mode 2 — Serverless Deployment · `deploy_with_server` branch
+
+**Branch:** `deploy_with_server`  
+**Targets:** Vercel, Cloudflare Pages (with Functions), Netlify
+
+The `deploy_with_server` branch uses `adapter-auto` and includes the SvelteKit server route at `/api/ai/review`, which acts as a CORS proxy. `callAI` routes all AI requests through this proxy, keeping API keys out of browser network logs.
+
+```bash
+git checkout deploy_with_server
+npm run build   # adapter-auto outputs the correct format for the detected platform
+```
+
+Push this branch to Vercel, Cloudflare Pages, or Netlify. The platform is detected automatically and no further configuration is required.
 
 ---
 
