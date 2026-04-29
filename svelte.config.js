@@ -9,8 +9,11 @@ const config = {
 	},
 	kit: {
 		adapter: adapter({
-			fallback: 'index.html'
-		})
+			fallback: '404.html'
+		}),
+		paths: {
+			base: process.env.GITHUB_ACTIONS ? '/local-first-ai-editor' : ''
+		}
 	},
 	preprocess: [mdsvex({ extensions: ['.svx', '.md'] })],
 	extensions: ['.svelte', '.svx', '.md']
