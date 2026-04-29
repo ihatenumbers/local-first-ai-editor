@@ -192,17 +192,41 @@
 	}
 
 	function getCopiedData() {
-		const currentScene = documentState.activeScene;
+		const currentVersion = documentState.activeVersion;
 
 		return {
-			recipes:
-				copyRecipes && currentScene
-					? currentScene.reviewRecipes.map((r) => ({ ...r, id: crypto.randomUUID() }))
-					: [],
-			context:
-				copyContext && currentScene
-					? currentScene.contextItems.map((c) => ({ ...c, id: crypto.randomUUID() }))
-					: []
+			recipes: copyRecipes && currentVersion
+				? currentVersion.reviewRecipes.map((r) => ({ ...r, id: crypto.randomUUID(), feedback: '', isGenerating: false, chatHistory: [] }))
+				: [],
+			context: copyContext && currentVersion
+				? currentVersion.contextItems.map((c) => ({ ...c, id: crypto.randomUUID() }))
+				: []
+		};
+	}
+
+	function makeNewScene(chapterNumber: number, sceneNumber: number, title: string) {
+		const id = crypto.randomUUID();
+		const { recipes, context } = getCopiedData();
+		return {
+			id,
+			chapterNumber,
+			sceneNumber,
+			title,
+			wordCount: 0,
+			versions: [
+				{
+					id, // first version ID = scene ID (preserves Yjs field)
+					name: 'Version 1',
+					isFinalOutput: false,
+					createdAt: Date.now(),
+					objectivesText: '',
+					todoList: [],
+					reviewRecipes: recipes,
+					contextItems: context,
+					annotations: []
+				}
+			],
+			activeVersionId: id
 		};
 	}
 
@@ -214,24 +238,9 @@
 		const newSceneNumber =
 			scenesInChapter.length > 0 ? Math.max(...scenesInChapter.map((s) => s.sceneNumber)) + 1 : 1;
 
-		const id = crypto.randomUUID();
-		const { recipes, context } = getCopiedData();
-
-		documentState.project.scenes.push({
-			id,
-			chapterNumber: currentChapter,
-			sceneNumber: newSceneNumber,
-			title: `Scene ${newSceneNumber}`,
-			content: '',
-			objectivesText: '',
-			todoList: [],
-			reviewRecipes: recipes,
-			contextItems: context,
-			annotations: [],
-			wordCount: 0
-		});
-
-		documentState.activeSceneId = id;
+		const scene = makeNewScene(currentChapter, newSceneNumber, `Scene ${newSceneNumber}`);
+		documentState.project.scenes.push(scene);
+		documentState.activeSceneId = scene.id;
 		expandedChapters[currentChapter] = true;
 	}
 
@@ -241,24 +250,9 @@
 				? Math.max(...documentState.project.scenes.map((s) => s.chapterNumber)) + 1
 				: 1;
 
-		const id = crypto.randomUUID();
-		const { recipes, context } = getCopiedData();
-
-		documentState.project.scenes.push({
-			id,
-			chapterNumber: newChapterNumber,
-			sceneNumber: 1,
-			title: `Scene 1`,
-			content: '',
-			objectivesText: '',
-			todoList: [],
-			reviewRecipes: recipes,
-			contextItems: context,
-			annotations: [],
-			wordCount: 0
-		});
-
-		documentState.activeSceneId = id;
+		const scene = makeNewScene(newChapterNumber, 1, 'Scene 1');
+		documentState.project.scenes.push(scene);
+		documentState.activeSceneId = scene.id;
 		expandedChapters[newChapterNumber] = true;
 	}
 </script>

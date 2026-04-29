@@ -4,6 +4,7 @@
 	import { uiState } from '$lib/state/ui.svelte';
 	import { buildSystemPrompt, buildUserMessage } from '$lib/utils/contextAssembler';
 	import { extractJsonFromText } from '$lib/utils/jsonParser';
+	import { buildFuzzyRegex, buildFallbackRegex } from '$lib/utils/fuzzySearch';
 	import { dndzone } from 'svelte-dnd-action';
 	import {
 		Plus,
@@ -32,16 +33,16 @@
 	};
 
 	const openTodos = $derived(
-		(documentState.activeScene?.todoList || []).filter(
+		(documentState.activeVersion?.todoList || []).filter(
 			(t) => t && typeof t === 'object' && (t.status === 'open' || t.status === 'ignored')
 		)
 	);
 
 	// Migrate string-based todos to structured TodoItems for backward compatibility
 	$effect(() => {
-		if (documentState.activeScene && documentState.activeScene.todoList?.length > 0) {
+		if (documentState.activeVersion && documentState.activeVersion.todoList?.length > 0) {
 			let hasOldTodos = false;
-			const migrated = documentState.activeScene.todoList.map((t) => {
+			const migrated = documentState.activeVersion.todoList.map((t) => {
 				if (typeof t === 'string') {
 					hasOldTodos = true;
 					return {
@@ -60,37 +61,37 @@
 			});
 
 			if (hasOldTodos) {
-				documentState.activeScene.todoList = migrated;
+				documentState.activeVersion.todoList = migrated;
 			}
 		}
 	});
 
 	function handleDndConsiderRecipes(e: CustomEvent<any>) {
-		if (documentState.activeScene) {
-			documentState.activeScene.reviewRecipes = e.detail.items;
+		if (documentState.activeVersion) {
+			documentState.activeVersion.reviewRecipes = e.detail.items;
 		}
 	}
 	function handleDndFinalizeRecipes(e: CustomEvent<any>) {
-		if (documentState.activeScene) {
-			documentState.activeScene.reviewRecipes = e.detail.items;
+		if (documentState.activeVersion) {
+			documentState.activeVersion.reviewRecipes = e.detail.items;
 		}
 		dragDisabledRecipes = true;
 	}
 
 	function handleDndConsiderTodos(e: CustomEvent<any>) {
-		if (documentState.activeScene) {
-			documentState.activeScene.todoList = e.detail.items;
+		if (documentState.activeVersion) {
+			documentState.activeVersion.todoList = e.detail.items;
 		}
 	}
 	function handleDndFinalizeTodos(e: CustomEvent<any>) {
-		if (documentState.activeScene) {
-			documentState.activeScene.todoList = e.detail.items;
+		if (documentState.activeVersion) {
+			documentState.activeVersion.todoList = e.detail.items;
 		}
 		dragDisabledTodos = true;
 	}
 
 	async function runRecipe(recipe: ReviewRecipe) {
-		if (!documentState.activeScene) return;
+		if (!documentState.activeVersion) return;
 
 		const tierConfig = settingsState.tiers[recipe.tier];
 		if (!tierConfig || !tierConfig.modelId) {
@@ -108,14 +109,10 @@
 		recipe.feedback = '';
 		expandedRecipes[recipe.id] = true;
 
-		const systemPrompt = buildSystemPrompt(
-			documentState.activeScene,
-			documentState.project,
-			recipe
-		);
+		const systemPrompt = buildSystemPrompt(documentState.activeVersion, documentState.project, recipe);
 		const userPrompt = uiState.editorInstance
 			? uiState.editorInstance.getText()
-			: buildUserMessage(documentState.activeScene);
+			: buildUserMessage();
 
 		if (settingsState.debugAiCalls) {
 			console.log('=== AI REQUEST START ===');
@@ -165,7 +162,6 @@
 				console.log('Raw Feedback Output:\n', recipe.feedback);
 			}
 
-			// Post-process response based on output format
 			if (recipe.outputFormat === 'todos') {
 				const parsed = extractJsonFromText(recipe.feedback);
 				if (parsed && Array.isArray(parsed.response)) {
@@ -178,8 +174,8 @@
 							source: 'recipe' as const,
 							createdAt: Date.now()
 						}));
-						documentState.activeScene.todoList = [
-							...documentState.activeScene.todoList,
+						documentState.activeVersion.todoList = [
+							...documentState.activeVersion.todoList,
 							...newTodos
 						];
 						recipe.feedback = `Successfully added ${strings.length} ToDos!`;
@@ -191,7 +187,6 @@
 					const editor = uiState.editorInstance;
 					const doc = editor.view.state.doc;
 
-					// Build text content and position map ONCE for the whole document
 					let extractedText = '';
 					let posMapping: number[] = [];
 
@@ -202,7 +197,6 @@
 								posMapping.push(pos + i);
 							}
 						} else if (node.isBlock) {
-							// Insert boundary whitespace so we don't merge words across blocks
 							if (extractedText.length > 0 && extractedText[extractedText.length - 1] !== '\n') {
 								extractedText += '\n';
 								posMapping.push(pos);
@@ -211,42 +205,19 @@
 					});
 
 					let matchCount = 0;
-					// Helper to construct whitespace-insensitive regex
-					const escapeRegExp = (str: string) => str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
 					parsed.response.forEach((item: any) => {
 						if (item.original_text && (item.suggestion || item.commentary || item.reasoning)) {
 							const searchString = item.original_text.trim();
-							if (searchString.length < 3) return; // Skip tiny strings
+							if (searchString.length < 3) return;
 
 							try {
-								// AI responses often hallucinate skipped text (e.g. "..."), change punctuation,
-								// or substitute hyphens. First we try a strict but typographically-fuzzy full match.
-								const escapedSearch = escapeRegExp(searchString);
-								let fuzzyRegexStr = escapedSearch
-									.replace(/\s+/g, '\\s+')
-									.replace(/['"‘’“”]/g, '[\'"‘’“”]')
-									.replace(/[-—–]/g, '[-—–]')
-									.replace(/\\\.\\\.\\\.|…/g, '(\\\.\\\.\\\.|…)');
+								const fuzzyRegex = buildFuzzyRegex(searchString);
+								let match = fuzzyRegex ? extractedText.match(fuzzyRegex) : null;
 
-								let match = extractedText.match(new RegExp(fuzzyRegexStr, 'i'));
-
-								// If standard fuzzy match fails, drop back to checking just the first and last few words.
-								// Models routinely summarize the middle of a string that they're quoting.
 								if (!match) {
-									const alphaWords = searchString
-										.split(/[\s\W]+/)
-										.filter((w: string) => w.length > 0);
-									if (alphaWords.length >= 8) {
-										// We need at least 8 words to safely take 4 from start and 4 from end without overlapping
-										const startWords = alphaWords.slice(0, 4).map(escapeRegExp).join('[\\s\\W]*');
-										const endWords = alphaWords.slice(-4).map(escapeRegExp).join('[\\s\\W]*');
-
-										// Use [\s\S]*? with max char bounds so we don't accidentally match half the entire book.
-										const fallbackRegexStr = `${startWords}[\\s\\S]{0,1000}?${endWords}`;
-										const fallbackRegex = new RegExp(fallbackRegexStr, 'i');
-										match = extractedText.match(fallbackRegex);
-									}
+									const fallbackRegex = buildFallbackRegex(searchString);
+									if (fallbackRegex) match = extractedText.match(fallbackRegex);
 								}
 
 								const annotationId = crypto.randomUUID();
@@ -254,23 +225,19 @@
 								let posTo = -1;
 
 								if (match && match.index !== undefined) {
-									// Map from string index back to ProseMirror document positions
 									posFrom = posMapping[match.index];
-
-									// Calculate end index mapping carefully
 									let endIndex = match.index + match[0].length - 1;
 									if (endIndex >= posMapping.length) endIndex = posMapping.length - 1;
-									posTo = posMapping[endIndex] + 1; // +1 because PM selections are end-exclusive
+									posTo = posMapping[endIndex] + 1;
 
-									// Apply the annotation in the editor
 									editor.commands.setTextSelection({ from: posFrom, to: posTo });
 									editor.commands.setAnnotation(annotationId, recipe.color || 'yellow');
 									matchCount++;
 
-									if (!documentState.activeScene!.annotations)
-										documentState.activeScene!.annotations = [];
+									if (!documentState.activeVersion!.annotations)
+										documentState.activeVersion!.annotations = [];
 
-									documentState.activeScene!.annotations.push({
+									documentState.activeVersion!.annotations.push({
 										id: annotationId,
 										recipeId: recipe.id,
 										originalText: item.original_text,
@@ -281,18 +248,15 @@
 										isIgnored: false
 									});
 								} else {
-									// Did not find the exact text in the document.
-									// Add it to ToDos instead so the user doesn't lose the AI insight.
-									if (!documentState.activeScene!.todoList) {
-										documentState.activeScene!.todoList = [];
+									if (!documentState.activeVersion!.todoList) {
+										documentState.activeVersion!.todoList = [];
 									}
 
 									const suggestionText =
 										item.suggestion || item.commentary || item.reasoning || 'No comment provided';
 
-									// Fallback: put unanchored lints in the ToDo list
-									documentState.activeScene!.todoList = [
-										...documentState.activeScene!.todoList,
+									documentState.activeVersion!.todoList = [
+										...documentState.activeVersion!.todoList,
 										{
 											id: crypto.randomUUID(),
 											text: `[Unanchored Lint] "${item.original_text.substring(0, 30)}..." - ${suggestionText}`,
@@ -303,7 +267,7 @@
 									];
 								}
 							} catch (e) {
-								console.error('Invalid regex built for:', searchString, e);
+								console.error('Annotation matching error for:', searchString, e);
 							}
 						}
 					});
@@ -322,6 +286,7 @@
 			recipe.isGenerating = false;
 		}
 	}
+
 	function onPointerDown(e: PointerEvent) {
 		isResizing = true;
 		(e.target as HTMLElement).setPointerCapture(e.pointerId);
@@ -355,30 +320,11 @@
 		return { posFrom, posTo };
 	}
 
-	// Kept for backward compatibility, unused in new workflow
-	function resolveAnnotation(annotation: import('$lib/state/document.svelte').Annotation) {
-		if (!uiState.editorInstance || !documentState.activeScene) return;
-		const { posFrom, posTo } = findAnnotationPos(annotation.id);
-
-		if (posFrom !== -1 && posTo !== -1 && annotation.suggestion) {
-			uiState.editorInstance
-				.chain()
-				.focus()
-				.setTextSelection({ from: posFrom, to: posTo })
-				.insertContent(annotation.suggestion)
-				.run();
-		}
-
-		documentState.activeScene.annotations = (documentState.activeScene.annotations || []).filter(
-			(a) => a.id !== annotation.id
-		);
-	}
-
 	function changeTodoStatus(todo: import('$lib/state/document.svelte').TodoItem, status: 'open' | 'completed' | 'ignored') {
-		if (!documentState.activeScene || !uiState.editorInstance) return;
-		const idx = documentState.activeScene.todoList.findIndex((t) => t.id === todo.id);
+		if (!documentState.activeVersion || !uiState.editorInstance) return;
+		const idx = documentState.activeVersion.todoList.findIndex((t) => t.id === todo.id);
 		if (idx !== -1) {
-			documentState.activeScene.todoList[idx].status = status;
+			documentState.activeVersion.todoList[idx].status = status;
 			if ((status === 'completed' || status === 'ignored') && todo.editorId) {
 				const { posFrom, posTo } = findAnnotationPos(todo.editorId);
 				if (posFrom !== -1 && posTo !== -1) {
@@ -394,13 +340,13 @@
 	}
 
 	function addTodoFromAnnotation(annotation: import('$lib/state/document.svelte').Annotation) {
-		if (!documentState.activeScene) return;
+		if (!documentState.activeVersion) return;
 
-		const recipe = documentState.activeScene.reviewRecipes.find(r => r.id === annotation.recipeId);
+		const recipe = documentState.activeVersion.reviewRecipes.find(r => r.id === annotation.recipeId);
 		const recipeColor = recipe?.color || 'yellow';
 
 		const todoText = `Address critique: "${annotation.commentary}" (Context: "${annotation.originalText}")`;
-		documentState.activeScene.todoList.push({
+		documentState.activeVersion.todoList.push({
 			id: crypto.randomUUID(),
 			text: todoText,
 			status: 'open',
@@ -410,15 +356,13 @@
 			editorId: annotation.id
 		});
 
-		// Clear the annotation from the lints list, but DO NOT unset it in Tiptap 
-		// so the highlight persists and is now owned by the ToDo item.
-		documentState.activeScene.annotations = (documentState.activeScene.annotations || []).filter(
+		documentState.activeVersion.annotations = (documentState.activeVersion.annotations || []).filter(
 			(a) => a.id !== annotation.id
 		);
 	}
 
 	function ignoreAnnotation(annotation: import('$lib/state/document.svelte').Annotation) {
-		if (!uiState.editorInstance || !documentState.activeScene) return;
+		if (!uiState.editorInstance || !documentState.activeVersion) return;
 		const { posFrom, posTo } = findAnnotationPos(annotation.id);
 
 		if (posFrom !== -1 && posTo !== -1) {
@@ -430,14 +374,14 @@
 				.run();
 		}
 
-		documentState.activeScene.annotations = (documentState.activeScene.annotations || []).filter(
+		documentState.activeVersion.annotations = (documentState.activeVersion.annotations || []).filter(
 			(a) => a.id !== annotation.id
 		);
 	}
 
 	function addRecipe() {
-		if (documentState.activeScene) {
-			documentState.activeScene.reviewRecipes.push({
+		if (documentState.activeVersion) {
+			documentState.activeVersion.reviewRecipes.push({
 				id: crypto.randomUUID(),
 				title: 'New Review Instructions',
 				prompt: '',
@@ -451,9 +395,10 @@
 	function toggleChatRecipe(recipeId: string) {
 		uiState.activeChatRecipeId = uiState.activeChatRecipeId === recipeId ? null : recipeId;
 	}
+
 	function deleteRecipe(id: string) {
-		if (documentState.activeScene)
-			documentState.activeScene.reviewRecipes = documentState.activeScene.reviewRecipes.filter(
+		if (documentState.activeVersion)
+			documentState.activeVersion.reviewRecipes = documentState.activeVersion.reviewRecipes.filter(
 				(r) => r.id !== id
 			);
 	}
@@ -492,7 +437,7 @@
 			<div
 				class="min-h-[50px] space-y-3"
 				use:dndzone={{
-					items: documentState.activeScene?.reviewRecipes || [],
+					items: documentState.activeVersion?.reviewRecipes || [],
 					flipDurationMs: 200,
 					dropTargetStyle: {},
 					dragDisabled: dragDisabledRecipes
@@ -500,7 +445,7 @@
 				onconsider={handleDndConsiderRecipes}
 				onfinalize={handleDndFinalizeRecipes}
 			>
-				{#each documentState.activeScene?.reviewRecipes || [] as recipe (recipe.id)}
+				{#each documentState.activeVersion?.reviewRecipes || [] as recipe (recipe.id)}
 					{@const isActiveChat = recipe.outputFormat === 'chat' && uiState.activeChatRecipeId === recipe.id}
 					<div
 						class="group overflow-hidden rounded-md border shadow-sm transition-colors {isActiveChat
@@ -522,7 +467,6 @@
 									<GripVertical size={16} />
 								</div>
 								{#if recipe.outputFormat === 'chat'}
-									<!-- Chat recipes: chevron expands rename field, icon toggles panel -->
 									<button
 										class="text-zinc-400 hover:text-indigo-600"
 										onclick={() => (expandedRecipes[recipe.id] = !expandedRecipes[recipe.id])}
@@ -766,9 +710,9 @@
 									{/if}
 								{/if}
 
-								{#if documentState.activeScene}
+								{#if documentState.activeVersion}
 									<div class="mt-2 space-y-2">
-										{#each (documentState.activeScene.annotations || []).filter((a) => a.recipeId === recipe.id && !a.isIgnored) as annotation (annotation.id)}
+										{#each (documentState.activeVersion.annotations || []).filter((a) => a.recipeId === recipe.id && !a.isIgnored) as annotation (annotation.id)}
 											<div
 												class="group relative rounded-md border p-3 text-sm shadow-sm transition-colors {COLOR_MAP[recipe.color || 'yellow']?.bg || 'bg-yellow-50'} {COLOR_MAP[recipe.color || 'yellow']?.border || 'border-yellow-200'} {COLOR_MAP[recipe.color || 'yellow']?.hover || 'hover:border-yellow-400'}"
 											>
@@ -813,7 +757,7 @@
 					</div>
 				{/each}
 
-				{#if (documentState.activeScene?.reviewRecipes || []).length === 0}
+				{#if (documentState.activeVersion?.reviewRecipes || []).length === 0}
 					<div
 						class="rounded-md border border-dashed border-zinc-300 p-4 text-center text-sm text-zinc-500"
 					>
@@ -839,7 +783,7 @@
 			<div
 				class="mb-2 rounded-md border border-zinc-300 bg-white p-2 shadow-sm"
 				use:dndzone={{
-					items: documentState.activeScene?.todoList || [],
+					items: documentState.activeVersion?.todoList || [],
 					flipDurationMs: 200,
 					dropTargetStyle: {},
 					dragDisabled: dragDisabledTodos
@@ -847,7 +791,7 @@
 				onconsider={handleDndConsiderTodos}
 				onfinalize={handleDndFinalizeTodos}
 			>
-				{#each documentState.activeScene?.todoList || [] as todo, i (typeof todo === 'object' && todo && 'id' in todo ? todo.id : i)}
+				{#each documentState.activeVersion?.todoList || [] as todo, i (typeof todo === 'object' && todo && 'id' in todo ? todo.id : i)}
 					{#if typeof todo !== 'string'}
 						<div
 							class="group mb-1 flex items-start gap-2 rounded border p-1.5 {todo.status === 'ignored' ? 'line-through opacity-50' : ''} {todo.color ? `${COLOR_MAP[todo.color]?.bg} ${COLOR_MAP[todo.color]?.border}` : 'border-transparent hover:border-zinc-200 hover:bg-zinc-50'}"
@@ -857,18 +801,10 @@
 								tabindex="0"
 								aria-label="Drag Todo"
 								class="mt-1 cursor-grab p-0.5 text-zinc-300 hover:text-zinc-600 active:cursor-grabbing"
-								onmouseenter={() => {
-									dragDisabledTodos = false;
-								}}
-								onmouseleave={() => {
-									dragDisabledTodos = true;
-								}}
-								ontouchstart={() => {
-									dragDisabledTodos = false;
-								}}
-								ontouchend={() => {
-									dragDisabledTodos = true;
-								}}
+								onmouseenter={() => { dragDisabledTodos = false; }}
+								onmouseleave={() => { dragDisabledTodos = true; }}
+								ontouchstart={() => { dragDisabledTodos = false; }}
+								ontouchend={() => { dragDisabledTodos = true; }}
 							>
 								<GripVertical size={14} />
 							</div>
@@ -899,54 +835,26 @@
 											changeTodoStatus(todo, todo.status === 'ignored' ? 'open' : 'ignored');
 										}}
 									>
-										<svg
-											xmlns="http://www.w3.org/2000/svg"
-											width="14"
-											height="14"
-											viewBox="0 0 24 24"
-											fill="none"
-											stroke="currentColor"
-											stroke-width="2"
-											stroke-linecap="round"
-											stroke-linejoin="round"
-											><circle cx="12" cy="12" r="10"></circle><line
-												x1="4.93"
-												y1="4.93"
-												x2="19.07"
-												y2="19.07"
-											></line></svg
-										>
+										<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"></line></svg>
 									</button>
 								{/if}
 								<button
 									class="text-zinc-400 hover:text-red-500"
 									title="Delete"
 									onclick={() => {
-										if (documentState.activeScene) {
-											documentState.activeScene.todoList =
-												documentState.activeScene.todoList.filter((t) => t.id !== todo.id);
+										if (documentState.activeVersion) {
+											documentState.activeVersion.todoList =
+												documentState.activeVersion.todoList.filter((t) => t.id !== todo.id);
 										}
 									}}
 								>
-									<svg
-										xmlns="http://www.w3.org/2000/svg"
-										width="14"
-										height="14"
-										viewBox="0 0 24 24"
-										fill="none"
-										stroke="currentColor"
-										stroke-width="2"
-										stroke-linecap="round"
-										stroke-linejoin="round"
-										><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"
-										></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg
-									>
+									<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"></path><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"></path><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"></path></svg>
 								</button>
 							</div>
 						</div>
 					{/if}
 				{/each}
-				{#if (documentState.activeScene?.todoList || []).length === 0}
+				{#if (documentState.activeVersion?.todoList || []).length === 0}
 					<div class="p-4 text-center text-sm text-zinc-500">No ToDos yet.</div>
 				{/if}
 			</div>
@@ -956,18 +864,17 @@
 				class="w-full rounded border border-zinc-300 bg-white p-2 text-sm shadow-sm placeholder:text-zinc-400 focus:ring-1 focus:ring-indigo-500 focus:outline-none"
 				placeholder="Add a scene to-do..."
 				onkeydown={(e) => {
-					if (e.key === 'Enter' && e.currentTarget.value.trim() && documentState.activeScene) {
+					if (e.key === 'Enter' && e.currentTarget.value.trim() && documentState.activeVersion) {
 						let newEditorId = undefined;
 						let newColor = undefined;
-						
-						// If text is selected in the editor, highlight it and bind to this ToDo
+
 						if (uiState.editorInstance && !uiState.editorInstance.state.selection.empty) {
 							newEditorId = crypto.randomUUID();
 							newColor = 'gray';
 							uiState.editorInstance.chain().focus().setAnnotation(newEditorId, newColor).run();
 						}
 
-						documentState.activeScene.todoList.push({
+						documentState.activeVersion.todoList.push({
 							id: crypto.randomUUID(),
 							text: e.currentTarget.value.trim(),
 							status: 'open',

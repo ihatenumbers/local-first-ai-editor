@@ -24,8 +24,8 @@
 	}
 
 	function addContext() {
-		if (documentState.activeScene) {
-			documentState.activeScene.contextItems.push({
+		if (documentState.activeVersion) {
+			documentState.activeVersion.contextItems.push({
 				id: crypto.randomUUID(),
 				title: 'New Context Item',
 				content: ''
@@ -34,8 +34,8 @@
 	}
 
 	function deleteContext(id: string) {
-		if (documentState.activeScene) {
-			documentState.activeScene.contextItems = documentState.activeScene.contextItems.filter(
+		if (documentState.activeVersion) {
+			documentState.activeVersion.contextItems = documentState.activeVersion.contextItems.filter(
 				(c) => c.id !== id
 			);
 		}
@@ -62,9 +62,9 @@
 	<div class="flex-1 space-y-6 overflow-y-auto p-4">
 		<div>
 			<h3 class="mb-2 text-sm font-semibold text-zinc-700">Writing Objectives</h3>
-			{#if documentState.activeScene}
+			{#if documentState.activeVersion}
 				<textarea
-					bind:value={documentState.activeScene.objectivesText}
+					bind:value={documentState.activeVersion.objectivesText}
 					class="h-24 w-full resize-y rounded-md border-zinc-300 bg-white p-2 text-sm shadow-sm focus:ring-1 focus:ring-indigo-500 focus:outline-none"
 					placeholder="Add your writing objectives here - when the scene or document is finished, what will it have achieved?"
 				></textarea>
@@ -88,7 +88,7 @@
 			</div>
 
 			<div class="space-y-3">
-				{#each documentState.activeScene?.contextItems || [] as item (item.id)}
+				{#each documentState.activeVersion?.contextItems || [] as item (item.id)}
 					<div class="group rounded-md border border-zinc-200 bg-white p-3 shadow-sm">
 						<div class="mb-2 flex items-center justify-between">
 							<input
@@ -113,7 +113,7 @@
 					</div>
 				{/each}
 
-				{#if (documentState.activeScene?.contextItems || []).length === 0}
+				{#if (documentState.activeVersion?.contextItems || []).length === 0}
 					<div
 						class="rounded-md border border-dashed border-zinc-300 p-4 text-center text-sm text-zinc-500"
 					>

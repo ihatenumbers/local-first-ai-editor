@@ -95,6 +95,8 @@
 
 	$effect(() => {
 		if (!element || !documentState.isLoaded || !documentState.activeSceneId) return;
+		const activeVersionId = documentState.activeScene?.activeVersionId;
+		if (!activeVersionId) return;
 
 		const newEditor = new Editor({
 			element: element,
@@ -118,7 +120,7 @@
 				TableCell,
 				Collaboration.configure({
 					document: documentState.ydoc,
-					field: 'scene-' + documentState.activeSceneId
+					field: 'scene-' + activeVersionId
 				})
 			],
 			editorProps: {

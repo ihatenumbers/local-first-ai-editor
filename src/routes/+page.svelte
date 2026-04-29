@@ -1,5 +1,4 @@
 <script lang="ts">
-	// Svelte 5 Global State
 	import { uiState } from '$lib/state/ui.svelte';
 	import { documentState } from '$lib/state/document.svelte';
 
@@ -8,6 +7,7 @@
 	import ReviewPanel from '$lib/components/ReviewPanel.svelte';
 	import ChatPanel from '$lib/components/ChatPanel.svelte';
 	import ContextPanel from '$lib/components/ContextPanel.svelte';
+	import VersionsPanel from '$lib/components/VersionsPanel.svelte';
 	import Tiptap from '$lib/components/Tiptap.svelte';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
 </script>
@@ -22,6 +22,10 @@
 			class="relative z-10 flex min-w-[400px] flex-1 flex-col overflow-hidden bg-white shadow-sm"
 		>
 			<Header />
+
+			{#if uiState.showVersionsPanel}
+				<VersionsPanel />
+			{/if}
 
 			<div class="w-full flex-1 overflow-y-auto">
 				<div class="w-full px-8 py-16 sm:px-12 md:px-16">

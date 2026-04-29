@@ -14,7 +14,7 @@
 	let isResizing = $state(false);
 
 	const activeRecipe = $derived(
-		documentState.activeScene?.reviewRecipes.find((r) => r.id === uiState.activeChatRecipeId)
+		documentState.activeVersion?.reviewRecipes.find((r) => r.id === uiState.activeChatRecipeId)
 	);
 
 	function onPointerDown(e: PointerEvent) {
@@ -32,7 +32,7 @@
 	}
 
 	async function sendMessage() {
-		if (!inputText.trim() || isGenerating || !activeRecipe || !documentState.activeScene) return;
+		if (!inputText.trim() || isGenerating || !activeRecipe || !documentState.activeVersion) return;
 
 		const userMessage: ChatMessage = {
 			id: crypto.randomUUID(),
@@ -74,7 +74,7 @@
 		const liveText = uiState.editorInstance?.getText() ?? undefined;
 		const systemPrompt = buildChatSystemPrompt(
 			CHAT_SYSTEM_PROMPT,
-			documentState.activeScene,
+			documentState.activeVersion!,
 			documentState.project,
 			liveText
 		);

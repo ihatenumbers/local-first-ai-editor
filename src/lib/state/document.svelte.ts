@@ -6,9 +6,9 @@ export interface Annotation {
 	id: string;
 	recipeId: string;
 	originalText: string;
-	suggestion?: string; // Kept for backward compatibility
-	commentary: string; // Replaces reasoning/suggestion
-	reasoning?: string; // Kept for backward compatibility
+	suggestion?: string;
+	commentary: string;
+	reasoning?: string;
 	isIgnored?: boolean;
 }
 
@@ -50,24 +50,69 @@ export interface TodoItem {
 	editorId?: string;
 }
 
-export interface Scene {
+export interface SceneVersion {
 	id: string;
-	chapterNumber: number;
-	sceneNumber: number;
-	title: string;
-	content: string;
+	name: string;
+	isFinalOutput: boolean;
+	createdAt: number;
 	objectivesText: string;
 	todoList: TodoItem[];
 	reviewRecipes: ReviewRecipe[];
 	contextItems: ContextItem[];
 	annotations: Annotation[];
+}
+
+export interface Scene {
+	id: string;
+	chapterNumber: number;
+	sceneNumber: number;
+	title: string;
 	wordCount: number;
+	versions: SceneVersion[];
+	activeVersionId: string;
 }
 
 export interface Project {
 	id: string;
 	title: string;
 	scenes: Scene[];
+}
+
+function makeFirstVersion(sceneId: string, data?: Partial<SceneVersion>): SceneVersion {
+	return {
+		id: sceneId, // version ID = scene ID preserves Yjs field 'scene-{id}'
+		name: 'Version 1',
+		isFinalOutput: false,
+		createdAt: Date.now(),
+		objectivesText: data?.objectivesText ?? '',
+		todoList: data?.todoList ?? [],
+		reviewRecipes: data?.reviewRecipes ?? [],
+		contextItems: data?.contextItems ?? [],
+		annotations: data?.annotations ?? []
+	};
+}
+
+function migrateScene(raw: any): Scene {
+	if (!raw.versions) {
+		return {
+			id: raw.id,
+			chapterNumber: raw.chapterNumber,
+			sceneNumber: raw.sceneNumber,
+			title: raw.title,
+			wordCount: raw.wordCount || 0,
+			versions: [
+				makeFirstVersion(raw.id, {
+					objectivesText: raw.objectivesText,
+					todoList: raw.todoList,
+					reviewRecipes: raw.reviewRecipes,
+					contextItems: raw.contextItems,
+					annotations: raw.annotations
+				})
+			],
+			activeVersionId: raw.id
+		};
+	}
+	return raw as Scene;
 }
 
 const defaultSceneId = crypto.randomUUID();
@@ -82,13 +127,9 @@ export class DocumentState {
 				chapterNumber: 1,
 				sceneNumber: 1,
 				title: 'Scene 1',
-				content: '',
-				objectivesText: '',
-				todoList: [],
-				reviewRecipes: [],
-				contextItems: [],
-				annotations: [],
-				wordCount: 0
+				wordCount: 0,
+				versions: [makeFirstVersion(defaultSceneId)],
+				activeVersionId: defaultSceneId
 			}
 		]
 	});
@@ -114,10 +155,17 @@ export class DocumentState {
 		return this.project.scenes.find((s) => s.id === this.activeSceneId);
 	}
 
+	get activeVersion(): SceneVersion | undefined {
+		const scene = this.activeScene;
+		if (!scene) return undefined;
+		return scene.versions.find((v) => v.id === scene.activeVersionId);
+	}
+
 	private loadFromYjs() {
 		const projectMap = this.ydoc.getMap('metadata');
 		const savedProject = projectMap.get('project') as Project;
 		if (savedProject) {
+			savedProject.scenes = savedProject.scenes.map(migrateScene);
 			this.project = savedProject;
 			if (!this.project.scenes.find((s) => s.id === this.activeSceneId)) {
 				this.activeSceneId = this.project.scenes[0]?.id ?? '';

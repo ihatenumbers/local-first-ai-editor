@@ -3,6 +3,7 @@ export class UIState {
 	showReviewPanel = $state(true);
 	showContextBoard = $state(true);
 	showSettings = $state(false);
+	showVersionsPanel = $state(false);
 
 	reviewPanelWidth = $state(320);
 	chatPanelWidth = $state(340);
