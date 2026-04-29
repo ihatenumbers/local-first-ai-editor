@@ -7,7 +7,8 @@
 		Settings,
 		History,
 		CheckSquare,
-		Star
+		Star,
+		Download
 	} from 'lucide-svelte';
 	import { uiState } from '$lib/state/ui.svelte';
 	import { documentState } from '$lib/state/document.svelte';
@@ -135,6 +136,13 @@
 		</button>
 
 		<div class="mx-1 h-4 w-px bg-zinc-200"></div>
+		<button
+			class="rounded p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100"
+			title="Export"
+			onclick={() => (uiState.showExportModal = true)}
+		>
+			<Download size={18} />
+		</button>
 		<button
 			class="rounded p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100"
 			title="Settings"

@@ -10,6 +10,7 @@
 	import VersionsPanel from '$lib/components/VersionsPanel.svelte';
 	import Tiptap from '$lib/components/Tiptap.svelte';
 	import SettingsModal from '$lib/components/SettingsModal.svelte';
+	import ExportModal from '$lib/components/ExportModal.svelte';
 </script>
 
 <main class="flex h-screen w-full overflow-hidden bg-zinc-50 font-sans text-zinc-900">
@@ -53,5 +54,9 @@
 
 	{#if uiState.showSettings}
 		<SettingsModal />
+	{/if}
+
+	{#if uiState.showExportModal}
+		<ExportModal />
 	{/if}
 </main>

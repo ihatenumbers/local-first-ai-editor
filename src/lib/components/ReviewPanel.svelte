@@ -537,7 +537,7 @@
 						{#if expandedRecipes[recipe.id] && recipe.outputFormat === 'chat'}
 							<div class="space-y-3 border-t border-zinc-200 bg-white p-3">
 								<div>
-									<label class="mb-1 block text-xs font-medium text-zinc-500">Chat Name</label>
+									<span class="mb-1 block text-xs font-medium text-zinc-500">Chat Name</span>
 									<input
 										type="text"
 										bind:value={recipe.title}
@@ -565,7 +565,7 @@
 									</div>
 								</div>
 								<div class="flex items-center gap-2">
-									<label class="text-[10px] font-medium text-zinc-600 whitespace-nowrap">Max tokens</label>
+									<span class="text-[10px] font-medium text-zinc-600 whitespace-nowrap">Max tokens</span>
 									<select
 										bind:value={recipe.maxTokens}
 										class="flex-1 rounded border border-zinc-200 bg-zinc-50 p-1 text-[10px] font-medium text-zinc-600 outline-none focus:ring-1 focus:ring-indigo-500"
@@ -644,7 +644,7 @@
 									</div>
 								</div>
 								<div class="flex items-center gap-2">
-									<label class="text-[10px] font-medium text-zinc-600 whitespace-nowrap">Max tokens</label>
+									<span class="text-[10px] font-medium text-zinc-600 whitespace-nowrap">Max tokens</span>
 									<select
 										bind:value={recipe.maxTokens}
 										class="flex-1 rounded border border-zinc-200 bg-zinc-50 p-1 text-[10px] font-medium text-zinc-600 outline-none focus:ring-1 focus:ring-indigo-500"
