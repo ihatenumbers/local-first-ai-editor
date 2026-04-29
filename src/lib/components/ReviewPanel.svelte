@@ -690,7 +690,7 @@ const res = await callAI({
 								></textarea>
 
 								{#if recipe.feedback || recipe.isGenerating}
-									{#if recipe.outputFormat === 'text' || recipe.isGenerating || (recipe.feedback || '').startsWith('Successfully') || (recipe.feedback || '').startsWith('Error:')}
+									{#if recipe.isGenerating || (recipe.feedback || '').startsWith('Successfully') || (recipe.feedback || '').startsWith('Error:')}
 										<div
 											class="relative mt-3 max-h-64 overflow-y-auto rounded-md border border-indigo-100 bg-indigo-50/50 p-3 font-sans text-sm whitespace-pre-wrap text-zinc-700"
 										>
