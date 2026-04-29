@@ -394,7 +394,7 @@
 	function addTodoFromAnnotation(annotation: import('$lib/state/document.svelte').Annotation) {
 		if (!documentState.activeScene) return;
 
-		const recipe = documentState.project?.reviewRecipes.find(r => r.id === annotation.recipeId);
+		const recipe = documentState.activeScene.reviewRecipes.find(r => r.id === annotation.recipeId);
 		const recipeColor = recipe?.color || 'yellow';
 
 		const todoText = `Address critique: "${annotation.commentary}" (Context: "${annotation.originalText}")`;

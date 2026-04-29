@@ -81,13 +81,20 @@ export class SettingsState {
 
 			$effect.root(() => {
 				$effect(() => {
-					localStorage.setItem(
-						'ai-reviewer-profiles',
-						JSON.stringify($state.snapshot(this.profiles))
-					);
+					// Use JSON.stringify directly (not $state.snapshot) so Svelte tracks
+					// deep mutations like profile.apiKey changes via bind:value
+					localStorage.setItem('ai-reviewer-profiles', JSON.stringify(this.profiles));
 					localStorage.setItem('ai-reviewer-debug', String(this.debugAiCalls));
-					localStorage.setItem('ai-reviewer-tiers', JSON.stringify($state.snapshot(this.tiers)));
+					localStorage.setItem('ai-reviewer-tiers', JSON.stringify(this.tiers));
 				});
+			});
+
+			// Safety net: force-save on tab/browser close in case the effect
+			// hasn't flushed yet
+			window.addEventListener('beforeunload', () => {
+				localStorage.setItem('ai-reviewer-profiles', JSON.stringify($state.snapshot(this.profiles)));
+				localStorage.setItem('ai-reviewer-debug', String(this.debugAiCalls));
+				localStorage.setItem('ai-reviewer-tiers', JSON.stringify($state.snapshot(this.tiers)));
 			});
 		}
 	}
