@@ -177,6 +177,16 @@ export class DocumentState {
 		}
 	}
 
+	async resetAll() {
+		if (this.provider) {
+			await this.provider.clearData();
+		}
+		localStorage.removeItem('ai-reviewer-profiles');
+		localStorage.removeItem('ai-reviewer-debug');
+		localStorage.removeItem('ai-reviewer-tiers');
+		window.location.reload();
+	}
+
 	private setupSync() {
 		let isSyncing = false;
 

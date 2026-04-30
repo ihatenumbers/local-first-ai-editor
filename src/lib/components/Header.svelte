@@ -9,7 +9,8 @@
 		CheckSquare,
 		Star,
 		Download,
-		Upload
+		Upload,
+		RotateCcw
 	} from 'lucide-svelte';
 	import { uiState } from '$lib/state/ui.svelte';
 	import { documentState } from '$lib/state/document.svelte';
@@ -17,6 +18,17 @@
 	const finalVersion = $derived(
 		documentState.activeScene?.versions.find((v) => v.isFinalOutput)
 	);
+
+	let showResetConfirm = $state(false);
+
+	function handleReset() {
+		showResetConfirm = true;
+	}
+
+	function confirmReset() {
+		showResetConfirm = false;
+		documentState.resetAll();
+	}
 
 	function loadFinalVersion() {
 		const scene = documentState.activeScene;
@@ -151,6 +163,31 @@
 		>
 			<Download size={18} />
 		</button>
+		{#if showResetConfirm}
+			<div class="flex items-center gap-2 rounded border border-red-200 bg-red-50 px-2 py-1 text-xs">
+				<span class="text-red-700 leading-tight">
+					<strong>Reset everything?</strong> Export your story first — this also deletes your AI settings.
+				</span>
+				<div class="flex items-center gap-1">
+					<button
+						class="rounded px-1.5 py-0.5 text-zinc-600 transition-colors hover:bg-zinc-200"
+						onclick={() => (showResetConfirm = false)}
+					>Cancel</button>
+					<button
+						class="rounded bg-red-600 px-1.5 py-0.5 text-white transition-colors hover:bg-red-700"
+						onclick={confirmReset}
+					>Reset</button>
+				</div>
+			</div>
+		{:else}
+			<button
+				class="rounded p-1.5 text-zinc-500 transition-colors hover:bg-red-50 hover:text-red-600"
+				title="Reset all data"
+				onclick={handleReset}
+			>
+				<RotateCcw size={18} />
+			</button>
+		{/if}
 		<button
 			class="rounded p-1.5 text-zinc-500 transition-colors hover:bg-zinc-100"
 			title="Settings"
