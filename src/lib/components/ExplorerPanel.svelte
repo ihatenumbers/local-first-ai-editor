@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { documentState } from '$lib/state/document.svelte';
-	import { ChevronRight, ChevronDown, GripVertical, Trash2 } from 'lucide-svelte';
+	import { ChevronRight, ChevronDown, GripVertical, Trash2, X } from 'lucide-svelte';
+	import { uiState } from '$lib/state/ui.svelte';
 
 	let expandedChapters = $state<Record<number, boolean>>({});
 	let sceneToDelete = $state<string | null>(null);
@@ -258,29 +259,36 @@
 </script>
 
 <aside
-	class="flex h-full w-64 shrink-0 flex-col border-r border-zinc-200 bg-zinc-100/50 transition-all"
+	class="flex h-full w-64 max-lg:w-full shrink-0 flex-col border-r max-lg:border-none border-zinc-200 bg-zinc-100/50 max-lg:bg-white transition-all"
 >
-	<div class="flex items-center justify-between border-b border-zinc-200/60 p-4">
-		<h2 class="text-xs font-bold tracking-wider text-zinc-500 uppercase">Explorer</h2>
-		<div class="flex gap-3">
-			<button
-				onclick={() => openCreateModal('chapter')}
-				class="text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-700"
-				title="Add Chapter"
-			>
-				+ Ch
-			</button>
-			<button
-				onclick={() => openCreateModal('scene')}
-				class="text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-700"
-				title="Add Scene"
-			>
-				+ Sc
-			</button>
+		<div class="flex items-center justify-between border-b border-zinc-200/60 p-4">
+			<h2 class="text-xs font-bold tracking-wider text-zinc-500 uppercase">Explorer</h2>
+			<div class="flex gap-3">
+				<button
+					class="hidden max-lg:block rounded p-1 text-zinc-500 transition-colors hover:bg-zinc-100"
+					onclick={() => (uiState.showExplorer = false)}
+					aria-label="Close Explorer"
+				>
+					<X size={16} />
+				</button>
+				<button
+					onclick={() => openCreateModal('chapter')}
+					class="text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-700"
+					title="Add Chapter"
+				>
+					+ Ch
+				</button>
+				<button
+					onclick={() => openCreateModal('scene')}
+					class="text-xs font-medium text-indigo-600 transition-colors hover:text-indigo-700"
+					title="Add Scene"
+				>
+					+ Sc
+				</button>
+			</div>
 		</div>
-	</div>
 
-	<div class="flex-1 space-y-2 overflow-y-auto p-4">
+		<div class="flex-1 space-y-2 overflow-y-auto p-4">
 		{#each chapters as ch}
 			<div
 				role="region"

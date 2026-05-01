@@ -47,7 +47,7 @@
 </script>
 
 <header
-	class="sticky top-0 z-20 flex items-center justify-between border-b border-zinc-200 bg-white px-4 py-2 text-xs text-zinc-600"
+	class="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-zinc-200 bg-white px-2 py-1.5 text-xs text-zinc-600 overflow-x-auto lg:overflow-visible lg:px-4 lg:py-2"
 >
 	<div class="flex items-center rounded bg-zinc-100 px-2 py-1 font-mono font-medium">
 		{#if documentState.activeScene}
@@ -59,16 +59,16 @@
 	<div class="flex items-center gap-6">
 		<div class="flex items-center gap-4">
 			{#if documentState.activeScene}
-				<span>{documentState.activeScene.wordCount} Words</span>
-				<span class="flex items-center gap-1">
+				<span class="hidden lg:inline">{documentState.activeScene.wordCount} Words</span>
+				<span class="hidden lg:flex items-center gap-1">
 					<CheckSquare size={14} />
 					{documentState.activeVersion?.todoList.length ?? 0} ToDos
 				</span>
 			{/if}
 		</div>
 
-		<div class="h-4 w-px bg-zinc-200"></div>
-		<div class="flex items-center gap-2">
+		<div class="hidden lg:block h-4 w-px bg-zinc-200"></div>
+		<div class="hidden lg:flex items-center gap-2">
 			<button
 				class="flex items-center gap-1 transition-colors {documentState.activeVersion?.isFinalOutput
 					? 'text-amber-500 hover:text-amber-600'

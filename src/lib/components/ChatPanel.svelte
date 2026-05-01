@@ -155,15 +155,15 @@ const res = await callAI({
 </script>
 
 <aside
-	class="relative flex shrink-0 flex-col border-l border-zinc-200 bg-white"
-	style="width: {uiState.chatPanelWidth}px"
+	class="relative flex shrink-0 flex-col border-l max-lg:border-none border-zinc-200 bg-white lg:w-[var(--chpw)] max-lg:w-full"
+	style="--chpw: {uiState.chatPanelWidth}px"
 >
 	<!-- Resize handle -->
 	<div
 		role="slider"
 		aria-valuenow={uiState.chatPanelWidth}
 		tabindex="0"
-		class="absolute top-0 bottom-0 left-0 z-50 w-1 -translate-x-1/2 cursor-col-resize transition-colors hover:bg-indigo-500/50"
+		class="absolute top-0 bottom-0 left-0 z-50 w-1 -translate-x-1/2 cursor-col-resize transition-colors hover:bg-indigo-500/50 max-lg:hidden"
 		onpointerdown={onPointerDown}
 		onpointermove={onPointerMove}
 		onpointerup={onPointerUp}
