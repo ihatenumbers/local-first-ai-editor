@@ -402,7 +402,7 @@ const res = await callAI({
 </script>
 
 <aside
-	class="relative flex shrink-0 flex-col border-l max-lg:border-none border-zinc-200 bg-zinc-50 max-lg:bg-white lg:w-[var(--rpw)] max-lg:w-full"
+	class="relative flex shrink-0 flex-col border-l max-lg:border-none border-zinc-200 bg-zinc-50 max-lg:bg-white lg:w-[var(--rpw)] max-lg:w-full max-lg:min-h-0 max-lg:shrink"
 	style="--rpw: {uiState.reviewPanelWidth}px"
 >
 	<div

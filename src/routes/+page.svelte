@@ -69,7 +69,7 @@
 				aria-label="Close Explorer"
 			></button>
 			<div
-				class="max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:w-72 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:bg-white max-lg:transition-transform max-lg:duration-300 {uiState.showExplorer
+				class="max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:z-50 max-lg:w-72 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:overflow-hidden max-lg:bg-white max-lg:transition-transform max-lg:duration-300 {uiState.showExplorer
 					? 'lg:contents max-lg:translate-x-0'
 					: 'lg:hidden max-lg:-translate-x-full'}"
 			>
@@ -99,7 +99,7 @@
 				aria-label="Close Review Panel"
 			></button>
 			<div
-				class="max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-50 max-lg:w-80 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:bg-white max-lg:transition-transform max-lg:duration-300 {uiState.showReviewPanel
+				class="max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-50 max-lg:w-80 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:overflow-hidden max-lg:bg-white max-lg:transition-transform max-lg:duration-300 {uiState.showReviewPanel
 					? 'lg:contents max-lg:translate-x-0'
 					: 'lg:hidden max-lg:translate-x-full'}"
 			>
@@ -114,7 +114,7 @@
 					aria-label="Close Chat"
 				></button>
 				<div
-					class="lg:contents max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-50 max-lg:w-80 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:bg-white max-lg:transition-transform max-lg:duration-300 max-lg:translate-x-0"
+					class="lg:contents max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-50 max-lg:w-80 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:overflow-hidden max-lg:bg-white max-lg:transition-transform max-lg:duration-300 max-lg:translate-x-0"
 				>
 					<ChatPanel />
 				</div>
@@ -129,7 +129,7 @@
 				aria-label="Close Context Board"
 			></button>
 			<div
-				class="max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-50 max-lg:w-80 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:bg-white max-lg:transition-transform max-lg:duration-300 {uiState.showContextBoard
+				class="max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-50 max-lg:w-80 max-lg:shadow-2xl max-lg:flex max-lg:flex-col max-lg:overflow-hidden max-lg:bg-white max-lg:transition-transform max-lg:duration-300 {uiState.showContextBoard
 					? 'lg:contents max-lg:translate-x-0'
 					: 'lg:hidden max-lg:translate-x-full'}"
 			>

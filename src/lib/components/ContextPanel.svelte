@@ -43,7 +43,7 @@
 </script>
 
 <aside
-	class="relative flex shrink-0 flex-col border-l max-lg:border-none border-zinc-200 bg-zinc-100/50 max-lg:bg-white lg:w-[var(--cpw)] max-lg:w-full"
+	class="relative flex shrink-0 flex-col border-l max-lg:border-none border-zinc-200 bg-zinc-100/50 max-lg:bg-white lg:w-[var(--cpw)] max-lg:w-full max-lg:min-h-0 max-lg:shrink"
 	style="--cpw: {uiState.contextPanelWidth}px"
 >
 	<div
